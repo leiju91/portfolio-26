@@ -83,20 +83,21 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Thème sombre du portfolio : fond et surfaces sur une même teinte (bleu ardoise), pas du noir pur */
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.115 0.018 268);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.195 0.022 268);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.19 0.022 268);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --primary-foreground: oklch(0.18 0.02 268);
+  --secondary: oklch(0.24 0.026 268);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(0.22 0.024 268);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(0.24 0.026 268);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -107,11 +108,11 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: oklch(0.17 0.02 268);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.22 0.024 268);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
@@ -127,4 +128,38 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Curseur personnalisé : désactivé sur tactile / réduction des animations (géré dans CustomCursor.tsx) */
+.custom-cursor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--primary);
+  box-shadow:
+    0 0 12px color-mix(in oklch, var(--primary) 55%, transparent),
+    0 0 1px color-mix(in oklch, var(--background) 40%, transparent);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.custom-cursor-ring {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklch, var(--primary) 45%, transparent);
+  background: color-mix(in oklch, var(--primary) 6%, transparent);
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+/* Le navigateur remet souvent `cursor: pointer` sur les liens / contrôles */
+body.custom-cursor-active a,
+body.custom-cursor-active button,
+body.custom-cursor-active [role="button"],
+body.custom-cursor-active label,
+body.custom-cursor-active summary,
+body.custom-cursor-active [data-cursor-hover] {
+  cursor: none !important;
 }
