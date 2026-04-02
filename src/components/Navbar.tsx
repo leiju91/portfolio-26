@@ -1,16 +1,22 @@
 "use client";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Terminal, Mail, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  GradientPillFrame,
+  gradientPillInnerSurfaceClassName,
+} from "@/components/ui/gradient-pill-frame";
 import { cn } from "@/lib/utils";
 
+/** Set to `false` when you are not open to work — badge styles update accordingly. */
+const isAvailableForWork = true;
+
 export default function Navbar() {
-  const reduceMotion = useReducedMotion();
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -41,14 +47,6 @@ export default function Navbar() {
     }
   })();
 
-  const dotAnimate = reduceMotion
-    ? { opacity: 1, scale: 1 }
-    : { opacity: [0.75, 1, 0.75], scale: [1, 1.25, 1] };
-
-  const dotTransition = reduceMotion
-    ? undefined
-    : { duration: 1.4, repeat: Infinity };
-
   const handleEmailClick = () => {
     if (!resolvedEmail) return;
     window.location.href = `mailto:${resolvedEmail}`;
@@ -60,11 +58,16 @@ export default function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="fixed top-6 left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-3xl -translate-x-1/2"
-      aria-label="Navigation principale"
+      aria-label="Main navigation"
     >
       <div className="relative w-full">
-        <div className="rounded-full p-px bg-linear-to-r from-emerald-400/50 via-cyan-400/30 to-fuchsia-400/40">
-          <div className="flex items-center justify-between gap-2 rounded-full border border-white/10 bg-background/72 backdrop-blur-xl px-3 py-2 sm:gap-4 sm:px-4">
+        <GradientPillFrame>
+          <div
+            className={cn(
+              gradientPillInnerSurfaceClassName,
+              "flex items-center justify-between gap-2 px-3 py-2 sm:gap-4 sm:px-4"
+            )}
+          >
             <div className="flex min-w-0 items-center gap-3">
               <Avatar
                 size="lg"
@@ -75,21 +78,7 @@ export default function Navbar() {
                 </AvatarFallback>
               </Avatar>
 
-              <Badge
-                variant="outline"
-                className="flex min-w-0 max-w-37 items-center gap-1.5 rounded-full border-white/10 bg-white/5 text-white/90 h-auto px-2 py-1 sm:max-w-none sm:gap-2 sm:px-3 sm:py-1.5"
-              >
-                <motion.span
-                  aria-hidden="true"
-                  className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(74,222,128,0.65)] origin-center"
-                  initial={{ opacity: 0.85, scale: 1 }}
-                  animate={dotAnimate}
-                  transition={dotTransition}
-                />
-                <span className="truncate text-xs font-medium sm:text-sm sm:whitespace-nowrap">
-                  I&apos;m available for work
-                </span>
-              </Badge>
+              <AvailabilityBadge available={isAvailableForWork} />
             </div>
 
             <div className="hidden items-center gap-1 sm:flex">
@@ -142,7 +131,7 @@ export default function Navbar() {
                 aria-expanded={mobileNavOpen}
                 aria-controls="nav-mobile-links"
                 aria-label={
-                  mobileNavOpen ? "Fermer le menu" : "Ouvrir le menu"
+                  mobileNavOpen ? "Close menu" : "Open menu"
                 }
                 onClick={() => setMobileNavOpen((open) => !open)}
               >
@@ -174,8 +163,8 @@ export default function Navbar() {
                   variant="outline"
                   size="icon"
                   disabled
-                  title="Ajoute NEXT_PUBLIC_GITHUB_URL dans .env.local puis redémarre npm run dev"
-                  aria-label="GitHub — non configuré"
+                  title="Add NEXT_PUBLIC_GITHUB_URL to .env.local, then restart npm run dev"
+                  aria-label="GitHub — not configured"
                   className="h-9 w-9 rounded-full border-white/10 bg-transparent opacity-50"
                 >
                   <Terminal size={18} className="text-white/90" />
@@ -189,7 +178,7 @@ export default function Navbar() {
                 title={
                   resolvedEmail
                     ? undefined
-                    : "Ajoute NEXT_PUBLIC_CONTACT_EMAIL ou NEXT_PUBLIC_CONTACT_EMAIL_B64 dans .env.local puis redémarre npm run dev"
+                    : "Add NEXT_PUBLIC_CONTACT_EMAIL or NEXT_PUBLIC_CONTACT_EMAIL_B64 to .env.local, then restart npm run dev"
                 }
                 className="h-9 w-9 rounded-full border-white/10 bg-transparent hover:bg-white/10 disabled:opacity-50"
                 onClick={handleEmailClick}
@@ -198,14 +187,14 @@ export default function Navbar() {
               </Button>
             </div>
           </div>
-        </div>
+        </GradientPillFrame>
 
         {mobileNavOpen ? (
           <>
             <button
               type="button"
               className="fixed inset-0 z-40 bg-black/45 sm:hidden"
-              aria-label="Fermer le menu"
+              aria-label="Close menu"
               onClick={() => setMobileNavOpen(false)}
             />
             <div

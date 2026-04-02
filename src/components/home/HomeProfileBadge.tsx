@@ -1,12 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import type { ReactElement } from "react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { GradientPillFrame } from "@/components/ui/gradient-pill-frame";
 import { homeProfile } from "@/data/home-profile";
 
 import type { HomeMotionReadyProps } from "./types";
@@ -59,7 +62,7 @@ export function HomeProfileBadge({
             className="border border-white/15 bg-linear-to-br from-muted to-background"
           >
             {avatarSrc ? (
-              <AvatarImage src={avatarSrc} alt={`Photo de ${name}`} />
+              <AvatarImage src={avatarSrc} alt={`${name} profile photo`} />
             ) : null}
             <AvatarFallback className="grid place-items-center bg-linear-to-br from-muted to-background font-semibold text-white/90">
               {profileInitials}
@@ -67,8 +70,8 @@ export function HomeProfileBadge({
           </Avatar>
           <span
             className="absolute right-1 bottom-1 z-10 size-4 rounded-full border border-white/20 bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.55)] ring-2 ring-background sm:right-1.5 sm:bottom-1.5 sm:size-5"
-            title="Disponible"
-            aria-label="Disponible"
+            title="Available"
+            aria-label="Available"
           />
         </div>
 
@@ -78,6 +81,12 @@ export function HomeProfileBadge({
         <p className="mt-2 text-sm font-semibold text-violet-400 sm:text-[0.95rem]">
           {title}
         </p>
+
+        <GradientPillFrame className="mt-6 w-fit">
+          <Button asChild variant="navGlass" size="navPill">
+            <Link href="/projects">View projects</Link>
+          </Button>
+        </GradientPillFrame>
       </motion.div>
     </motion.div>
   );

@@ -1,10 +1,10 @@
 /**
- * Profil affiché sur la page d’accueil (badge sous le titre).
- * Modifie ces valeurs ici — pas besoin de .env.
+ * Profile shown on the home page (badge under the title).
+ * Edit these values here — no .env required.
  */
 export const homeProfile = {
-  /** `null` = affiche seulement les initiales. Sinon URL absolue ou chemin `/fichier` dans `public/`. */
+  /** `null` = show initials only. Otherwise absolute URL or `/file` path in `public/`. */
   avatarSrc: null as string | null,
   name: "Julie Lacresse",
-  title: "Développeuse web",
+  title: "Web developer",
 };

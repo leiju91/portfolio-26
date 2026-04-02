@@ -29,17 +29,17 @@ const briefLines: BriefLine[] = [
   {
     Icon: MapPin,
     iconColor: "text-sky-400/85",
-    text: "Moselle, France & Luxembourg · remote / hybride",
+    text: "Moselle, France & Luxembourg · remote / hybrid",
   },
   {
     Icon: Monitor,
     iconColor: "text-violet-400/85",
-    text: "Drupal, WP, React, accessibilité",
+    text: "Drupal, WP, React, accessibility",
   },
   {
     Icon: Sparkles,
     iconColor: "text-amber-300/85",
-    text: "Disponibilité : à préciser",
+    text: "Availability: TBD",
   },
 ];
 
@@ -52,12 +52,12 @@ export function HomeBriefStrip({
       initial={{ opacity: 0, y: 16 }}
       animate={hydrated ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.45, delay: 0.3, ease: easeOut }}
-      aria-label="En bref"
+      aria-label="In brief"
     >
-      {/* Mobile : une ligne sous l’autre */}
+      {/* Mobile: stacked lines */}
       <div className="w-full max-w-sm sm:hidden">
         <p className="mb-3 text-center text-[0.62rem] font-medium uppercase tracking-wider text-white/35">
-          En bref
+          In brief
         </p>
         <ul className="flex flex-col gap-3 text-[0.7rem] leading-snug text-white/60">
           {briefLines.map(({ Icon, iconColor, text }) => (
@@ -72,13 +72,13 @@ export function HomeBriefStrip({
         </ul>
       </div>
 
-      {/* ≥ sm : bandeau horizontal défilable */}
+      {/* ≥ sm: horizontal scroll strip */}
       <div
         className="-mx-1 hidden w-full max-w-full overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:thin] sm:block [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15"
       >
         <div className="inline-flex min-w-max flex-nowrap items-center gap-x-1.5 px-1 text-[0.62rem] leading-none text-white/55 sm:gap-x-2.5 sm:text-[0.7rem]">
           <span className="shrink-0 font-medium uppercase tracking-wider text-white/35">
-            En bref
+            In brief
           </span>
           <span className="shrink-0 text-white/20" aria-hidden>
             ·

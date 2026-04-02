@@ -83,7 +83,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Thème sombre du portfolio : fond et surfaces sur une même teinte (bleu ardoise), pas du noir pur */
+/* Portfolio dark theme: background and surfaces share a slate-blue cast, not pure black */
 .dark {
   --background: oklch(0.115 0.018 268);
   --foreground: oklch(0.985 0 0);
@@ -130,7 +130,7 @@
   }
 }
 
-/* Curseur personnalisé : désactivé sur tactile / réduction des animations (géré dans CustomCursor.tsx) */
+/* Custom cursor: off for touch / reduced motion (see CustomCursor.tsx) */
 .custom-cursor-dot {
   width: 6px;
   height: 6px;
@@ -154,7 +154,7 @@
   transition: border-color 0.25s ease, background-color 0.25s ease;
 }
 
-/* Le navigateur remet souvent `cursor: pointer` sur les liens / contrôles */
+/* Browsers often force `cursor: pointer` on links / controls */
 body.custom-cursor-active a,
 body.custom-cursor-active button,
 body.custom-cursor-active [role="button"],

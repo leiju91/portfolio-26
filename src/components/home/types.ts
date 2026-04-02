@@ -1,6 +1,6 @@
 /**
- * Props partagées par les blocs home animés après montage client
- * (évite les écarts Framer Motion / SSR).
+ * Props shared by home blocks animated after client mount
+ * (avoids Framer Motion / SSR mismatch).
  */
 export interface HomeMotionReadyProps {
   hydrated: boolean;
