@@ -12,9 +12,7 @@ import {
   gradientPillInnerSurfaceClassName,
 } from "@/components/ui/gradient-pill-frame";
 import { cn } from "@/lib/utils";
-
-/** Set to `false` when you are not open to work — badge styles update accordingly. */
-const isAvailableForWork = true;
+import { homeProfile } from "@/data/home-profile";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -78,7 +76,7 @@ export default function Navbar() {
                 </AvatarFallback>
               </Avatar>
 
-              <AvailabilityBadge available={isAvailableForWork} />
+              <AvailabilityBadge available={homeProfile.openToWork} />
             </div>
 
             <div className="hidden items-center gap-1 sm:flex">

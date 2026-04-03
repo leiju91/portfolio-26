@@ -7,4 +7,9 @@ export const homeProfile = {
   avatarSrc: null as string | null,
   name: "Julie Lacresse",
   title: "Web developer",
+  /**
+   * Drives the navbar availability badge and the avatar status dot (green vs red).
+   * Set to `false` when you are not open to work.
+   */
+  openToWork: true,
 };

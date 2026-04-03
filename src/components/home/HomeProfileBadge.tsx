@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { GradientPillFrame } from "@/components/ui/gradient-pill-frame";
 import { homeProfile } from "@/data/home-profile";
+import { cn } from "@/lib/utils";
 
 import type { HomeMotionReadyProps } from "./types";
 
@@ -30,7 +31,7 @@ function initialsFromName(name: string): string {
 export function HomeProfileBadge({
   hydrated,
 }: HomeMotionReadyProps): ReactElement {
-  const { avatarSrc, name, title } = homeProfile;
+  const { avatarSrc, name, title, openToWork } = homeProfile;
   const profileInitials = initialsFromName(name);
 
   const off = { opacity: 0, y: 18 };
@@ -69,9 +70,16 @@ export function HomeProfileBadge({
             </AvatarFallback>
           </Avatar>
           <span
-            className="absolute right-1 bottom-1 z-10 size-4 rounded-full border border-white/20 bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.55)] ring-2 ring-background sm:right-1.5 sm:bottom-1.5 sm:size-5"
-            title="Available"
-            aria-label="Available"
+            className={cn(
+              "absolute right-1 bottom-1 z-10 size-4 rounded-full border border-white/20 ring-2 ring-background sm:right-1.5 sm:bottom-1.5 sm:size-5",
+              openToWork
+                ? "bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.55)]"
+                : "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.55)]"
+            )}
+            title={openToWork ? "Available for work" : "Not available for work"}
+            aria-label={
+              openToWork ? "Available for work" : "Not available for work"
+            }
           />
         </div>
 
