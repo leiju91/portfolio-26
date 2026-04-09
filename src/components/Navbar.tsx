@@ -5,7 +5,7 @@ import { Terminal, Mail, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AvailabilityBadge } from "@/components/AvailabilityBadge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   GradientPillFrame,
@@ -50,6 +50,14 @@ export default function Navbar() {
     window.location.href = `mailto:${resolvedEmail}`;
   };
 
+  const profileInitials =
+    homeProfile.name
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => w[0]?.toUpperCase() ?? "")
+      .join("")
+      .slice(0, 2) || "?";
+
   return (
     <motion.nav
       initial={{ y: -10, opacity: 0 }}
@@ -71,8 +79,14 @@ export default function Navbar() {
                 size="lg"
                 className="border border-white/15 bg-linear-to-br from-muted to-background"
               >
+                {homeProfile.avatarSrc ? (
+                  <AvatarImage
+                    src={homeProfile.avatarSrc}
+                    alt={`${homeProfile.name} profile photo`}
+                  />
+                ) : null}
                 <AvatarFallback className="grid place-items-center text-xs font-semibold text-white/90">
-                  J
+                  {profileInitials}
                 </AvatarFallback>
               </Avatar>
 

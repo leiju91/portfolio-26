@@ -34,7 +34,7 @@ const briefLines: BriefLine[] = [
   {
     Icon: Monitor,
     iconColor: "text-violet-400/85",
-    text: "Drupal, WP, React, accessibility",
+    text: "Drupal, WP, React"
   },
   {
     Icon: Sparkles,

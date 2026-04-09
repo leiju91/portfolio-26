@@ -86,9 +86,9 @@ export function HomeProfileBadge({
         <p className="mt-6 text-xl font-bold tracking-tight text-white sm:text-2xl">
           {name}
         </p>
-        <p className="mt-2 text-sm font-semibold text-violet-400 sm:text-[0.95rem]">
+        <h1 className="mt-2 text-xl font-semibold tracking-tight text-violet-400 sm:text-2xl md:text-3xl">
           {title}
-        </p>
+        </h1>
 
         <GradientPillFrame className="mt-6 w-fit">
           <Button asChild variant="navGlass" size="navPill">

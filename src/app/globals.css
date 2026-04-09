@@ -163,3 +163,56 @@ body.custom-cursor-active summary,
 body.custom-cursor-active [data-cursor-hover] {
   cursor: none !important;
 }
+
+/* Floating chatbot: small bubbles rising from the FAB */
+@keyframes chatbot-fab-bubble-rise {
+  0% {
+    transform: translate(
+        calc(-50% + var(--chatbot-bubble-drift, 0px)),
+        0.2rem
+      )
+      scale(var(--chatbot-bubble-scale, 0.45));
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.96;
+  }
+  100% {
+    transform: translate(
+        calc(-50% + calc(var(--chatbot-bubble-drift, 0px) * 1.35)),
+        -2.85rem
+      )
+      scale(1);
+    opacity: 0;
+  }
+}
+
+.chatbot-fab-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 38%;
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: color-mix(in oklch, oklch(0.76 0.13 182) 68%, transparent);
+  border: 1px solid color-mix(in oklch, oklch(0.9 0.07 195) 58%, transparent);
+  box-shadow:
+    0 0 11px color-mix(in oklch, oklch(0.74 0.12 185) 58%, transparent),
+    inset 0 1px 0 color-mix(in oklch, oklch(0.98 0 0) 52%, transparent);
+  animation: chatbot-fab-bubble-rise 2.75s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.chatbot-fab-bubble--lg {
+  width: 0.74rem;
+  height: 0.74rem;
+  --chatbot-bubble-scale: 0.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chatbot-fab-bubble {
+    animation: none;
+    opacity: 0;
+  }
+}

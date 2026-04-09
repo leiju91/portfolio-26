@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { SkillsBoard } from "@/components/skills/SkillsBoard";
-import { education, workExperience } from "@/data/skills";
+import { education, hobbies, languageSkills, workExperience } from "@/data/skills";
 
 export const metadata: Metadata = {
   title: "Compétences · Portfolio Julie",
@@ -11,8 +11,13 @@ export const metadata: Metadata = {
 
 export default function SkillsPage() {
   return (
-    <main className="flex flex-1 flex-col px-6 pb-20 pt-28">
-      <SkillsBoard workExperience={workExperience} education={education} />
+    <main className="flex flex-1 flex-col px-6 pb-8 pt-28">
+      <SkillsBoard
+        workExperience={workExperience}
+        education={education}
+        languages={languageSkills}
+        hobbies={hobbies}
+      />
     </main>
   );
 }

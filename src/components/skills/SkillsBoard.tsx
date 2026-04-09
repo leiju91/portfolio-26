@@ -1,11 +1,18 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Briefcase, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+import {
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+  Languages,
+  Sparkles,
+} from "lucide-react";
 import type { ReactElement } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { SkillsTimelineEntry } from "@/data/skills";
+import type { LanguageSkill, SkillsTimelineEntry } from "@/data/skills";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,19 +37,21 @@ const slideVariants = {
 function SkillEntryCard({
   entry,
   accentClassName,
+  metaType,
 }: {
   entry: SkillsTimelineEntry;
   accentClassName: string;
+  metaType: "work" | "education";
 }): ReactElement {
   return (
     <article
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-white/10 bg-card/55 p-5 shadow-sm backdrop-blur-sm",
+        "relative flex h-full min-h-104 overflow-hidden rounded-2xl border border-white/10 bg-card/55 p-5 shadow-sm backdrop-blur-sm",
         "before:absolute before:inset-y-3 before:left-0 before:w-1 before:rounded-full before:content-['']",
         accentClassName
       )}
     >
-      <div className="pl-3">
+      <div className="flex h-full w-full flex-col pl-3">
         <p className="text-[0.65rem] font-medium uppercase tracking-wider text-white/40">
           {entry.period}
         </p>
@@ -55,11 +64,18 @@ function SkillEntryCard({
             <span className="text-white/40"> · {entry.location}</span>
           ) : null}
         </p>
+        {metaType === "work" ? (
+          <p className="mt-1 text-xs text-white/50">
+            Type de contrat : {entry.contractType ?? "—"}
+          </p>
+        ) : (
+          <p className="mt-1 text-xs text-white/50">Niveau : {entry.level ?? "—"}</p>
+        )}
         {entry.summary ? (
           <p className="mt-3 text-sm leading-relaxed text-white/55">{entry.summary}</p>
         ) : null}
 
-        <div className="mt-4">
+        <div className="mt-auto pt-4">
           <p className="text-[0.65rem] font-medium uppercase tracking-wider text-white/38">
             Compétences
           </p>
@@ -90,12 +106,14 @@ function SliderColumn({
   entries,
   accentClassName,
   iconClassName,
+  metaType,
 }: {
   title: string;
   Icon: typeof Briefcase;
   entries: SkillsTimelineEntry[];
   accentClassName: string;
   iconClassName: string;
+  metaType: "work" | "education";
 }): ReactElement {
   const count = entries.length;
   const [index, setIndex] = useState(0);
@@ -138,7 +156,7 @@ function SliderColumn({
     <section
       ref={sectionRef}
       tabIndex={0}
-      className="flex flex-col gap-4 outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl"
+      className="flex h-full flex-col gap-4 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       aria-label={title}
       aria-roledescription="carousel"
     >
@@ -202,11 +220,12 @@ function SliderColumn({
             animate="center"
             exit="exit"
             transition={{ duration: 0.28, ease: easeOut }}
-            className="w-full"
+            className="h-full w-full"
           >
             <SkillEntryCard
               entry={entry}
               accentClassName={accentClassName}
+              metaType={metaType}
             />
           </motion.div>
         </AnimatePresence>
@@ -247,45 +266,118 @@ function SliderColumn({
 type SkillsBoardProps = {
   workExperience: SkillsTimelineEntry[];
   education: SkillsTimelineEntry[];
+  languages: LanguageSkill[];
+  hobbies: string[];
 };
 
 export function SkillsBoard({
   workExperience: work,
   education,
+  languages,
+  hobbies,
 }: SkillsBoardProps): ReactElement {
   return (
     <>
-      <motion.header
+      <section className="mx-auto flex min-h-[calc(100svh-9rem)] w-full max-w-5xl snap-start scroll-mt-28 flex-col justify-center">
+        <motion.header
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: easeOut }}
+          className="mb-10 w-full"
+        >
+          <h1 className="sr-only">Compétences et parcours</h1>
+          <p className="text-center text-sm text-white/55 sm:text-base">
+            Fais défiler avec les flèches pour parcourir rapidement mon profil.
+          </p>
+        </motion.header>
+
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
+          <SliderColumn
+            title="Emplois"
+            Icon={Briefcase}
+            entries={work}
+            accentClassName="before:bg-emerald-400/75"
+            iconClassName="text-emerald-400/90"
+            metaType="work"
+          />
+          <SliderColumn
+            title="Formations"
+            Icon={GraduationCap}
+            entries={education}
+            accentClassName="before:bg-violet-400/75"
+            iconClassName="text-violet-400/90"
+            metaType="education"
+          />
+        </div>
+      </section>
+
+      <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: easeOut }}
-        className="mx-auto mb-10 max-w-3xl text-center"
+        transition={{ duration: 0.4, ease: easeOut, delay: 0.08 }}
+        className="mx-auto mt-16 grid min-h-[calc(100svh-9rem)] w-full max-w-5xl snap-start scroll-mt-28 content-center gap-5 md:grid-cols-2"
+        aria-label="Langues et hobbies"
       >
-        <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          Compétences & parcours
-        </h1>
-        <p className="mt-2 text-sm text-white/55 sm:text-base">
-          Une expérience et une formation à la fois — fais défiler avec les flèches
-          ou les points.
-        </p>
-      </motion.header>
+        <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-card/55 p-5 shadow-sm backdrop-blur-sm">
+          <div className="mb-4 flex items-center gap-2.5">
+            <span className="grid size-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-cyan-300/90">
+              <Languages className="size-4.5" strokeWidth={2} aria-hidden />
+            </span>
+            <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
+              Langues
+            </h2>
+          </div>
+          <ul className="space-y-2.5" aria-label="Niveaux de langues">
+            {languages.map((language, i) => (
+              <motion.li
+                key={language.id}
+                initial={{ opacity: 0, y: 6 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.65 }}
+                transition={{ duration: 0.24, delay: i * 0.05, ease: easeOut }}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2.5"
+              >
+                <span className="text-sm text-white/88">{language.name}</span>
+                <Badge
+                  variant="secondary"
+                  className="h-6 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-2.5 text-[0.7rem] font-semibold text-cyan-100"
+                >
+                  {language.level}
+                </Badge>
+              </motion.li>
+            ))}
+          </ul>
+        </article>
 
-      <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-2 lg:gap-12 lg:items-start">
-        <SliderColumn
-          title="Emplois"
-          Icon={Briefcase}
-          entries={work}
-          accentClassName="before:bg-emerald-400/75"
-          iconClassName="text-emerald-400/90"
-        />
-        <SliderColumn
-          title="Formations"
-          Icon={GraduationCap}
-          entries={education}
-          accentClassName="before:bg-violet-400/75"
-          iconClassName="text-violet-400/90"
-        />
-      </div>
+        <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-card/55 p-5 shadow-sm backdrop-blur-sm">
+          <div className="mb-4 flex items-center gap-2.5">
+            <span className="grid size-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-fuchsia-300/90">
+              <Sparkles className="size-4.5" strokeWidth={2} aria-hidden />
+            </span>
+            <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
+              Hobbies
+            </h2>
+          </div>
+          <ul className="flex flex-wrap gap-2" aria-label="Centres d'intérêt">
+            {hobbies.map((hobby, i) => (
+              <motion.li
+                key={hobby}
+                initial={{ opacity: 0, y: 6 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.65 }}
+                transition={{ duration: 0.24, delay: i * 0.04, ease: easeOut }}
+              >
+                <Badge
+                  variant="secondary"
+                  className="h-7 rounded-full border border-white/12 bg-white/7 px-3 text-xs font-medium text-white/88 hover:bg-white/10"
+                >
+                  {hobby}
+                </Badge>
+              </motion.li>
+            ))}
+          </ul>
+        </article>
+      </motion.section>
     </>
   );
 }
