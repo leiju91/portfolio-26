@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { ReactElement } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import type { LanguageSkill, SkillsTimelineEntry } from "@/data/skills";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,9 @@ function SkillEntryCard({
   accentClassName: string;
   metaType: "work" | "education";
 }): ReactElement {
+  const t = useTranslations("skillsPage");
+  const dash = "—";
+
   return (
     <article
       className={cn(
@@ -66,10 +70,12 @@ function SkillEntryCard({
         </p>
         {metaType === "work" ? (
           <p className="mt-1 text-xs text-white/50">
-            Type de contrat : {entry.contractType ?? "—"}
+            {t("contract", { value: entry.contractType ?? dash })}
           </p>
         ) : (
-          <p className="mt-1 text-xs text-white/50">Niveau : {entry.level ?? "—"}</p>
+          <p className="mt-1 text-xs text-white/50">
+            {t("level", { value: entry.level ?? dash })}
+          </p>
         )}
         {entry.summary ? (
           <p className="mt-3 text-sm leading-relaxed text-white/55">{entry.summary}</p>
@@ -77,11 +83,11 @@ function SkillEntryCard({
 
         <div className="mt-auto pt-4">
           <p className="text-[0.65rem] font-medium uppercase tracking-wider text-white/38">
-            Compétences
+            {t("skillsHeading")}
           </p>
           <ul
             className="mt-2 flex flex-wrap gap-2"
-            aria-label={`Compétences : ${entry.title}`}
+            aria-label={t("skillsAria", { title: entry.title })}
           >
             {entry.skills.map((skill) => (
               <li key={skill}>
@@ -115,6 +121,7 @@ function SliderColumn({
   iconClassName: string;
   metaType: "work" | "education";
 }): ReactElement {
+  const t = useTranslations("skillsPage");
   const count = entries.length;
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -188,7 +195,7 @@ function SliderColumn({
               variant="outline"
               size="icon"
               className="size-9 shrink-0 rounded-full border-white/10 bg-transparent hover:bg-white/10"
-              aria-label={`${title} — slide précédente`}
+              aria-label={t("prevSlide", { title })}
               onClick={() => go(-1)}
             >
               <ChevronLeft className="size-4 text-white/90" aria-hidden />
@@ -198,7 +205,7 @@ function SliderColumn({
               variant="outline"
               size="icon"
               className="size-9 shrink-0 rounded-full border-white/10 bg-transparent hover:bg-white/10"
-              aria-label={`${title} — slide suivante`}
+              aria-label={t("nextSlide", { title })}
               onClick={() => go(1)}
             >
               <ChevronRight className="size-4 text-white/90" aria-hidden />
@@ -213,7 +220,10 @@ function SliderColumn({
             key={entry.id}
             role="group"
             aria-roledescription="slide"
-            aria-label={`${index + 1} sur ${count}`}
+            aria-label={t("slidePosition", {
+              current: index + 1,
+              total: count,
+            })}
             custom={direction}
             variants={slideVariants}
             initial="enter"
@@ -235,7 +245,7 @@ function SliderColumn({
         <div
           className="flex justify-center gap-1.5 pt-1"
           role="tablist"
-          aria-label={`Repères ${title}`}
+          aria-label={t("dotsAria", { title })}
         >
           {entries.map((e, i) => (
             <button
@@ -243,7 +253,7 @@ function SliderColumn({
               type="button"
               role="tab"
               aria-selected={i === index}
-              aria-label={`Afficher ${e.title}`}
+              aria-label={t("showEntry", { title: e.title })}
               className={cn(
                 "h-2 rounded-full transition-all duration-200",
                 i === index
@@ -276,6 +286,8 @@ export function SkillsBoard({
   languages,
   hobbies,
 }: SkillsBoardProps): ReactElement {
+  const t = useTranslations("skillsPage");
+
   return (
     <>
       <section className="mx-auto flex min-h-[calc(100svh-9rem)] w-full max-w-5xl snap-start scroll-mt-28 flex-col justify-center">
@@ -285,15 +297,15 @@ export function SkillsBoard({
           transition={{ duration: 0.4, ease: easeOut }}
           className="mb-10 w-full"
         >
-          <h1 className="sr-only">Compétences et parcours</h1>
+          <h1 className="sr-only">{t("headingSr")}</h1>
           <p className="text-center text-sm text-white/55 sm:text-base">
-            Fais défiler avec les flèches pour parcourir rapidement mon profil.
+            {t("boardIntro")}
           </p>
         </motion.header>
 
         <div className="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
           <SliderColumn
-            title="Emplois"
+            title={t("jobs")}
             Icon={Briefcase}
             entries={work}
             accentClassName="before:bg-emerald-400/75"
@@ -301,7 +313,7 @@ export function SkillsBoard({
             metaType="work"
           />
           <SliderColumn
-            title="Formations"
+            title={t("education")}
             Icon={GraduationCap}
             entries={education}
             accentClassName="before:bg-violet-400/75"
@@ -316,7 +328,7 @@ export function SkillsBoard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: easeOut, delay: 0.08 }}
         className="mx-auto mt-16 grid min-h-[calc(100svh-9rem)] w-full max-w-5xl snap-start scroll-mt-28 content-center gap-5 md:grid-cols-2"
-        aria-label="Langues et hobbies"
+        aria-label={t("langHobbiesAria")}
       >
         <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-card/55 p-5 shadow-sm backdrop-blur-sm">
           <div className="mb-4 flex items-center gap-2.5">
@@ -324,10 +336,10 @@ export function SkillsBoard({
               <Languages className="size-4.5" strokeWidth={2} aria-hidden />
             </span>
             <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
-              Langues
+              {t("languages")}
             </h2>
           </div>
-          <ul className="space-y-2.5" aria-label="Niveaux de langues">
+          <ul className="space-y-2.5" aria-label={t("languagesListAria")}>
             {languages.map((language, i) => (
               <motion.li
                 key={language.id}
@@ -355,10 +367,10 @@ export function SkillsBoard({
               <Sparkles className="size-4.5" strokeWidth={2} aria-hidden />
             </span>
             <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
-              Hobbies
+              {t("hobbies")}
             </h2>
           </div>
-          <ul className="flex flex-wrap gap-2" aria-label="Centres d'intérêt">
+          <ul className="flex flex-wrap gap-2" aria-label={t("hobbiesListAria")}>
             {hobbies.map((hobby, i) => (
               <motion.li
                 key={hobby}

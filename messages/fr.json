@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "siteName": "Portfolio Julie",
+    "siteDescription": "Portfolio — développement front-end, projets et parcours."
+  },
+  "nav": {
+    "ariaMain": "Navigation principale",
+    "home": "Accueil",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "closeMenu": "Fermer le menu",
+    "openMenu": "Ouvrir le menu",
+    "github": "GitHub (nouvel onglet)",
+    "githubDisabled": "GitHub — non configuré",
+    "email": "Courriel",
+    "githubEnvHint": "Ajoutez NEXT_PUBLIC_GITHUB_URL dans .env.local, puis relancez npm run dev",
+    "emailEnvHint": "Ajoutez NEXT_PUBLIC_CONTACT_EMAIL ou NEXT_PUBLIC_CONTACT_EMAIL_B64 dans .env.local, puis relancez npm run dev",
+    "langSwitcher": "Langue du site",
+    "langFr": "Français",
+    "langEn": "English"
+  },
+  "footer": {
+    "aria": "Pied de page",
+    "navAria": "Navigation du pied de page",
+    "builtWith": "Réalisé avec Next.js"
+  },
+  "home": {
+    "title": "Développeuse web créative | Design & code 💻🎨",
+    "briefAria": "En bref",
+    "briefHeading": "En bref",
+    "brief1": "Dev front / créatif",
+    "brief2": "Moselle, France & Luxembourg · télétravail / hybride",
+    "brief3": "Drupal, WP, React",
+    "brief4": "Disponibilité : à préciser",
+    "viewProjects": "Voir les projets",
+    "profilePhotoAlt": "Photo de profil de {name}"
+  },
+  "availability": {
+    "open": "Disponible",
+    "closed": "Indisponible",
+    "openLong": "Ouverte aux opportunités",
+    "closedLong": "Pas disponible pour le moment",
+    "dotOpenTitle": "Disponible",
+    "dotClosedTitle": "Indisponible",
+    "dotOpenAria": "Disponible",
+    "dotClosedAria": "Indisponible"
+  },
+  "projectsPage": {
+    "title": "Projets",
+    "intro": "Galerie bento interactive — emplacements jusqu’à ce que les vrais visuels et liens soient branchés.",
+    "headingSr": "Projets"
+  },
+  "projectsGallery": {
+    "filterToolbar": "Filtrer les projets",
+    "openProject": "Ouvrir le projet : {title}",
+    "placeholder": "Placeholder",
+    "categoryCode": "Code",
+    "categoryDesign": "Design"
+  },
+  "projectDetail": {
+    "close": "Fermer",
+    "stack": "Stack",
+    "stackAria": "Technologies utilisées sur ce projet"
+  },
+  "skillsPage": {
+    "metaTitle": "Compétences",
+    "metaDescription": "Parcours professionnel et formations, avec les compétences acquises à chaque étape.",
+    "boardIntro": "Fais défiler avec les flèches pour parcourir rapidement mon profil.",
+    "headingSr": "Compétences et parcours",
+    "jobs": "Emplois",
+    "education": "Formations",
+    "contract": "Type de contrat : {value}",
+    "level": "Niveau : {value}",
+    "skillsHeading": "Compétences",
+    "skillsAria": "Compétences : {title}",
+    "prevSlide": "{title} — slide précédente",
+    "nextSlide": "{title} — slide suivante",
+    "slidePosition": "{current} sur {total}",
+    "dotsAria": "Repères {title}",
+    "showEntry": "Afficher {title}",
+    "langHobbiesAria": "Langues et loisirs",
+    "languages": "Langues",
+    "languagesListAria": "Niveaux de langues",
+    "hobbies": "Loisirs",
+    "hobbiesListAria": "Centres d’intérêt"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page introuvable",
+    "body": "Ce lien ne mène nulle part — la loutre non plus n’a rien trouvé par ici.",
+    "otterAlt": "Illustration : loutre avec un saumon",
+    "home": "Retour à l’accueil"
+  },
+  "chatbot": {
+    "otterAlt": "Loutre assistante souriante tenant un saumon, mascotte du chatbot",
+    "suggested1": "Quels sont tes projets ?",
+    "suggested2": "Comment te contacter ?",
+    "suggested3": "Quelles technologies maîtrises-tu ?",
+    "welcome": "Salut, je suis le compagnon de Julie, une loutre assistante. Pose-moi une question sur son portfolio.",
+    "title": "Le compagnon de Julie",
+    "subtitle": "Assistant loutre",
+    "closeChat": "Fermer le chatbot",
+    "thinking": "Le compagnon réfléchit…",
+    "placeholder": "Pose ta question…",
+    "send": "Envoyer le message",
+    "openFab": "Ouvrir le chatbot",
+    "nudge": "Hé, je suis la loutre — viens discuter avec moi !",
+    "dismissNudge": "Fermer le message",
+    "closeSpotifyWindow": "Fermer la fenêtre Spotify",
+    "error": "Désolé, je n’ai pas pu répondre pour le moment. Réessaie dans un instant."
+  },
+  "spotify": {
+    "openPlaylist": "Ouvrir la playlist Spotify",
+    "closeOverlay": "Fermer la fenêtre Spotify",
+    "dialogTitle": "Playlist Spotify",
+    "dialogDescription": "Lecteur musical Spotify intégré au site",
+    "closePlayer": "Fermer le lecteur",
+    "brand": "Spotify",
+    "iframeTitle": "Playlist Spotify",
+    "defaultHint": "Playlist par défaut — définis NEXT_PUBLIC_SPOTIFY_PLAYLIST_ID dans .env.local pour la tienne."
+  }
+}

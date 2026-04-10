@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatMessage } from "@/lib/chatbot-api";
-import {
-  education,
-  hobbies,
-  languageSkills,
-  workExperience,
-} from "@/data/skills";
-import { projects } from "@/data/projects";
+import { getSkillsBundle } from "@/data/skills";
+import { getProjects } from "@/data/projects";
 
 const JULIE_BIRTHDATE = process.env.JULIE_BIRTHDATE ?? "";
 const JULIE_ASTRO_SIGN = process.env.JULIE_ASTRO_SIGN ?? "";
@@ -109,8 +104,7 @@ Langues
 - Anglais: B1
 - Italien: B2
 
-Hobbies
-- Basket-ball, tennis de table, ski
+(Loisirs et details a jour: uniquement dans le bloc dynamique du portfolio ci-dessous.)
 `.trim();
 
 const SYSTEM_PROMPT = `
@@ -129,34 +123,51 @@ Ton de voix:
 - Utilise un champ lexical marin leger (exemples: "Bienvenue a bord !", "Plongeons dans ses projets", "C'est limpide comme de l'eau de roche !").
 - Ajoute quelques emojis lies a la mer ou aux animaux (ex: 🦦, 🌊, ✨), sans en abuser.
 
+Style des reponses:
+- Reponds dans la langue du message de l'utilisateur (francais ou anglais).
+- Ecris comme dans une vraie conversation : phrases liees entre elles, pas d'enumeration seche du type "A, B, C, D." quand tu parles de passions ou de personnalite.
+- Pour les hobbies ou centres d'interet : regroupe les themes (ex. creation, sport, detente, culture) et donne de la couleur en une ou deux phrases, sans recopier mot pour mot la liste du portfolio.
+- Pour ce qu'elle cherche comme poste ou zone geographique : t'appuie uniquement sur le bloc "Envies professionnelles" de la base ; reformule avec tes mots, en restant fidele au sens.
+- Tu peux utiliser quelques puces seulement pour les competences techniques ou le parcours date, si la question est "liste de stack" ou chronologie.
+
 Regles d'or:
 - Si la question n'est pas couverte par la base de connaissances, reponds exactement:
 "Ma petite moustache ne fretille pas sur ce sujet, je n'ai pas l'info ! Le mieux est de contacter Julie directement par email."
-- Garde des reponses courtes et faciles a lire.
-- Utilise des listes a puces si utile.
+- Limite la longueur : un petit paragraphe ou deux courts paragraphes en general.
 - Ne sors jamais de ton role de loutre.
 `.trim();
 
-const portfolioKnowledgeBase = (() => {
-  const experienceLines = workExperience.map(
+const buildPortfolioKnowledgeBlock = (
+  localeLabel: string,
+  context: ReturnType<typeof getSkillsBundle>,
+  projects: ReturnType<typeof getProjects>
+) => {
+  const careerWhat =
+    context.chatbotCareerContext.whatSheWants ||
+    "Non renseigne dans les donnees du portfolio.";
+  const careerWhere =
+    context.chatbotCareerContext.whereSheWantsToWork ||
+    "Non renseigne dans les donnees du portfolio.";
+
+  const experienceLines = context.workExperience.map(
     (entry) =>
-      `- ${entry.period} | ${entry.title} chez ${entry.organization} (${entry.location ?? "N/A"})${
+      `- ${entry.period} | ${entry.title} @ ${entry.organization} (${entry.location ?? "N/A"})${
         entry.summary ? `: ${entry.summary}` : ""
       }`
   );
 
-  const educationLines = education.map(
+  const educationLines = context.education.map(
     (entry) =>
       `- ${entry.period} | ${entry.title} - ${entry.organization}${
         entry.location ? ` (${entry.location})` : ""
       }`
   );
 
-  const languageLines = languageSkills.map(
+  const languageLines = context.languageSkills.map(
     (language) => `- ${language.name}: ${language.level}`
   );
 
-  const hobbyLines = hobbies.map((hobby) => `- ${hobby}`);
+  const hobbyLines = context.hobbies.map((hobby) => `- ${hobby}`);
 
   const projectLines = projects.map(
     (project) =>
@@ -164,31 +175,50 @@ const portfolioKnowledgeBase = (() => {
   );
 
   return `
-Donnees dynamiques du portfolio (skills.ts + projects.ts):
+[${localeLabel}]
 
 Experiences:
 ${experienceLines.join("\n")}
 
-Formations:
+Education:
 ${educationLines.join("\n")}
 
-Langues:
+Languages:
 ${languageLines.join("\n")}
 
-Hobbies:
+Hobbies (reference list — weave into prose, do not recite):
 ${hobbyLines.join("\n")}
 
-Projets:
+Career preferences (Julie's wording — paraphrase naturally):
+- Role / environment: ${careerWhat}
+- Location / work mode: ${careerWhere}
+
+Projects:
 ${projectLines.join("\n")}
 `.trim();
-})();
+};
+
+const buildPortfolioKnowledgeBase = () => {
+  const fr = getSkillsBundle("fr");
+  const en = getSkillsBundle("en");
+  const frProjects = getProjects("fr");
+  const enProjects = getProjects("en");
+
+  return `
+Dynamic portfolio data (French + English; facts should agree across both):
+
+${buildPortfolioKnowledgeBlock("FR", fr, frProjects)}
+
+${buildPortfolioKnowledgeBlock("EN", en, enProjects)}
+`.trim();
+};
 
 const buildSystemPrompt = () =>
   `${SYSTEM_PROMPT}
 
 ${buildPersonalFacts()}
 
-${portfolioKnowledgeBase}`;
+${buildPortfolioKnowledgeBase()}`;
 
 type Provider = "openai" | "gemini";
 
@@ -247,7 +277,7 @@ const requestOpenAI = async (messages: ChatMessage[]) => {
     },
     body: JSON.stringify({
       model,
-      temperature: 0.5,
+      temperature: 0.65,
       messages: [
         { role: "system", content: buildSystemPrompt() },
         ...toChatHistory(messages),
@@ -284,7 +314,7 @@ const requestOpenAIStream = async (
     },
     body: JSON.stringify({
       model,
-      temperature: 0.5,
+      temperature: 0.65,
       stream: true,
       messages: [
         { role: "system", content: buildSystemPrompt() },
@@ -367,7 +397,7 @@ const requestGemini = async (messages: ChatMessage[]) => {
       parts: [{ text: message.content }],
     })),
     generationConfig: {
-      temperature: 0.5,
+      temperature: 0.65,
     },
   });
 
@@ -408,7 +438,7 @@ const requestGeminiStream = async (
       parts: [{ text: message.content }],
     })),
     generationConfig: {
-      temperature: 0.5,
+      temperature: 0.65,
     },
   });
 
@@ -517,35 +547,6 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
     text.includes("ou habite") || text.includes("localisation") || text.includes("ou est basee");
   if (asksLocation) {
     return "Julie est basee a Hagondange (57300), France 🌍";
-  }
-
-  if (text.includes("competence") || text.includes("skills") || text.includes("stack")) {
-    return "Ses competences principales: HTML/CSS, JavaScript, React, Next.js, Drupal, WordPress, et la Suite Adobe (Photoshop, Illustrator, InDesign).";
-  }
-
-  if (text.includes("langue") || text.includes("parle")) {
-    return `Langues: ${languageSkills.map((language) => `${language.name} (${language.level})`).join(", ")}.`;
-  }
-
-  if (text.includes("hobby") || text.includes("loisir")) {
-    return `Ses loisirs: ${hobbies.join(", ")}.`;
-  }
-
-  if (text.includes("experience") || text.includes("parcours pro") || text.includes("travail")) {
-    const latestWork = workExperience[0];
-    if (!latestWork) return null;
-    return `Experience recente: ${latestWork.title} chez ${latestWork.organization} (${latestWork.period}).`;
-  }
-
-  if (text.includes("formation") || text.includes("etude") || text.includes("diplome")) {
-    const latestEducation = education[0];
-    if (!latestEducation) return null;
-    return `Formation recente: ${latestEducation.title} - ${latestEducation.organization} (${latestEducation.period}).`;
-  }
-
-  if (text.includes("projet")) {
-    const topProjects = projects.slice(0, 5).map((project) => project.title).join(", ");
-    return `Projets de Julie: ${topProjects}. Objectif en cours: monter en competence sur l'IA et sur des frameworks front comme React.`;
   }
 
   return null;

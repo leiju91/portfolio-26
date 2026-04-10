@@ -8,8 +8,9 @@ import {
 } from "framer-motion";
 import { ImageIcon, Laptop, Palette, type LucideIcon } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+
 import type { Project, ProjectCategory } from "@/data/projects";
-import { projects } from "@/data/projects";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -57,9 +58,16 @@ function matchesFilter(
 type BentoCardProps = {
   project: Project;
   onOpenProject: (project: Project) => void;
+  openProjectLabel: (title: string) => string;
+  placeholderLabel: string;
 };
 
-function BentoCard({ project, onOpenProject }: BentoCardProps) {
+function BentoCard({
+  project,
+  onOpenProject,
+  openProjectLabel,
+  placeholderLabel,
+}: BentoCardProps) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -83,7 +91,7 @@ function BentoCard({ project, onOpenProject }: BentoCardProps) {
         reduceMotion ? undefined : { scale: 0.99, transition: { duration: 0.15 } }
       }
       onClick={() => onOpenProject(project)}
-      aria-label={`Ouvrir le projet : ${project.title}`}
+      aria-label={openProjectLabel(project.title)}
       className={cn(
         "group relative flex min-h-34 w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-background/72 text-left shadow-lg backdrop-blur-xl outline-none md:min-h-0",
         "focus-visible:ring-2 focus-visible:ring-emerald-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -110,7 +118,7 @@ function BentoCard({ project, onOpenProject }: BentoCardProps) {
             aria-hidden
           />
           <span className="text-[0.65rem] font-medium uppercase tracking-widest text-white/40">
-            Placeholder
+            {placeholderLabel}
           </span>
         </div>
         <header className="mt-auto space-y-1">
@@ -128,20 +136,24 @@ function BentoCard({ project, onOpenProject }: BentoCardProps) {
   );
 }
 
-const FILTERS: {
-  id: ProjectCategory;
-  label: string;
-  icon: LucideIcon;
-}[] = [
-  { id: "code", label: "Code", icon: Laptop },
-  { id: "design", label: "Design", icon: Palette },
-];
-
-export function ProjectsBentoGallery({ items = projects }: { items?: Project[] }) {
+export function ProjectsBentoGallery({ items }: { items: Project[] }) {
+  const tGallery = useTranslations("projectsGallery");
   const [activeCategory, setActiveCategory] = useState<ProjectCategory | null>(
     null
   );
   const [dialogProject, setDialogProject] = useState<Project | null>(null);
+
+  const filters: {
+    id: ProjectCategory;
+    label: string;
+    icon: LucideIcon;
+  }[] = useMemo(
+    () => [
+      { id: "code", label: tGallery("categoryCode"), icon: Laptop },
+      { id: "design", label: tGallery("categoryDesign"), icon: Palette },
+    ],
+    [tGallery]
+  );
 
   const filtered = useMemo(
     () => items.filter((p) => matchesFilter(p, activeCategory)),
@@ -153,6 +165,9 @@ export function ProjectsBentoGallery({ items = projects }: { items?: Project[] }
   };
 
   const dialogOpen = dialogProject !== null;
+
+  const openProjectLabel = (title: string) =>
+    tGallery("openProject", { title });
 
   return (
     <div className="flex flex-col gap-6">
@@ -167,9 +182,9 @@ export function ProjectsBentoGallery({ items = projects }: { items?: Project[] }
       <div
         className="flex flex-wrap items-center justify-center gap-2"
         role="toolbar"
-        aria-label="Filter projects"
+        aria-label={tGallery("filterToolbar")}
       >
-        {FILTERS.map(({ id, label, icon: Icon }) => {
+        {filters.map(({ id, label, icon: Icon }) => {
           const pressed = activeCategory === id;
           return (
             <Button
@@ -200,6 +215,8 @@ export function ProjectsBentoGallery({ items = projects }: { items?: Project[] }
                 key={project.id}
                 project={project}
                 onOpenProject={setDialogProject}
+                openProjectLabel={openProjectLabel}
+                placeholderLabel={tGallery("placeholder")}
               />
             ))}
           </AnimatePresence>

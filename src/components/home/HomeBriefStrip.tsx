@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Briefcase, MapPin, Monitor, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactElement } from "react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -17,80 +18,80 @@ const iconClassSm =
 type BriefLine = {
   Icon: LucideIcon;
   iconColor: string;
-  text: string;
+  messageKey: "brief1" | "brief2" | "brief3" | "brief4";
 };
 
 const briefLines: BriefLine[] = [
   {
     Icon: Briefcase,
     iconColor: "text-emerald-400/85",
-    text: "Dev front / creative",
+    messageKey: "brief1",
   },
   {
     Icon: MapPin,
     iconColor: "text-sky-400/85",
-    text: "Moselle, France & Luxembourg · remote / hybrid",
+    messageKey: "brief2",
   },
   {
     Icon: Monitor,
     iconColor: "text-violet-400/85",
-    text: "Drupal, WP, React"
+    messageKey: "brief3",
   },
   {
     Icon: Sparkles,
     iconColor: "text-amber-300/85",
-    text: "Availability: TBD",
+    messageKey: "brief4",
   },
 ];
 
 export function HomeBriefStrip({
   hydrated,
 }: HomeMotionReadyProps): ReactElement {
+  const t = useTranslations("home");
+
   return (
     <motion.section
       className="mt-24 flex w-full min-w-0 flex-col items-center sm:mt-32"
       initial={{ opacity: 0, y: 16 }}
       animate={hydrated ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.45, delay: 0.3, ease: easeOut }}
-      aria-label="In brief"
+      aria-label={t("briefAria")}
     >
-      {/* Mobile: stacked lines */}
       <div className="w-full max-w-sm sm:hidden">
         <p className="mb-3 text-center text-[0.62rem] font-medium uppercase tracking-wider text-white/35">
-          In brief
+          {t("briefHeading")}
         </p>
         <ul className="flex flex-col gap-3 text-[0.7rem] leading-snug text-white/60">
-          {briefLines.map(({ Icon, iconColor, text }) => (
-            <li key={text} className="flex items-start gap-2.5">
+          {briefLines.map(({ Icon, iconColor, messageKey }) => (
+            <li key={messageKey} className="flex items-start gap-2.5">
               <Icon
                 className={cn("mt-0.5 size-4 shrink-0", iconColor)}
                 aria-hidden
               />
-              <span>{text}</span>
+              <span>{t(messageKey)}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* ≥ sm: horizontal scroll strip */}
       <div
         className="-mx-1 hidden w-full max-w-full overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:thin] sm:block [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15"
       >
         <div className="inline-flex min-w-max flex-nowrap items-center gap-x-1.5 px-1 text-[0.62rem] leading-none text-white/55 sm:gap-x-2.5 sm:text-[0.7rem]">
           <span className="shrink-0 font-medium uppercase tracking-wider text-white/35">
-            In brief
+            {t("briefHeading")}
           </span>
           <span className="shrink-0 text-white/20" aria-hidden>
             ·
           </span>
-          {briefLines.map(({ Icon, iconColor, text }, i) => (
-            <span key={text} className="contents">
+          {briefLines.map(({ Icon, iconColor, messageKey }, i) => (
+            <span key={messageKey} className="contents">
               <span className="flex shrink-0 items-center gap-1.5">
                 <Icon
                   className={cn(iconClassSm, iconColor)}
                   aria-hidden
                 />
-                <span className="whitespace-nowrap">{text}</span>
+                <span className="whitespace-nowrap">{t(messageKey)}</span>
               </span>
               {i < briefLines.length - 1 ? (
                 <span className="shrink-0 text-white/20" aria-hidden>

@@ -1,36 +1,11 @@
-export type ProjectCategory = "code" | "design";
+import type { Project } from "./types";
 
-export type ProjectCoverImage = {
-  src: string;
-  alt: string;
-};
-
-export type Project = {
-  id: string;
-  title: string;
-  summary: string;
-  /** ISO 8601 date, e.g. `2025-03-15` — shown in detail dialog. */
-  date: string;
-  /** Longer text for the project detail panel. */
-  description: string;
-  coverImage: ProjectCoverImage;
-  /** Technologies / outils (libellés affichés en petites tuiles). */
-  technologies: string[];
-  /** Filter tags — a project can appear in both filters. */
-  categories: ProjectCategory[];
-  /** Grid column span at `md` and up (`2`-column base on small screens). */
-  colSpan: 1 | 2 | 3 | 4;
-  rowSpan: 1 | 2;
-  /** Tailwind gradient placeholder tint — aligned with navbar pill (emerald / cyan / fuchsia). */
-  placeholderClass: string;
-};
-
-/** Placeholder entries — replace `coverImage` with real case-study assets when ready. */
-export const projects: Project[] = [
+export const projectsFr: Project[] = [
   {
     id: "p1",
     title: "Featured concept",
-    summary: "Tuile mise en avant — image hero et lien case study à brancher.",
+    summary:
+      "Tuile mise en avant — image hero et lien case study à brancher.",
     date: "2025-02-12",
     description:
       "Prototype d’une page détail e-commerce avec hiérarchie typographique sobre et CTA mis en relief. Les espacements suivent une grille 8px ; les couleurs reprennent la palette de la marque. Prochaine étape : intégration au CMS et tests d’accessibilité (contraste, focus).",

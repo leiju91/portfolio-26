@@ -3,6 +3,7 @@
 import {
   type CSSProperties,
   FormEvent,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -10,6 +11,7 @@ import {
 } from "react";
 import Image from "next/image";
 import { Send, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import {
   ChatMessage,
@@ -23,21 +25,6 @@ import {
 } from "@/components/ui/gradient-pill-frame";
 
 const chatbotOtterSrc = "/Loutre_mignonne_avec_un_saumon.png";
-const chatbotOtterAlt =
-  "Loutre assistante souriante tenant un saumon, mascotte du chatbot";
-
-const suggestedQuestions = [
-  "Quels sont tes projets ?",
-  "Comment te contacter ?",
-  "Quelles technologies maitrises-tu ?",
-];
-
-const initialMessage: ChatMessage = {
-  id: "welcome",
-  role: "assistant",
-  content:
-    "Salut, je suis Le compagnon de Julie, une loutre assistante. Pose-moi une question sur son portfolio.",
-};
 
 interface FloatingChatbotProps {
   streamProvider?: StreamChatHandler;
@@ -53,7 +40,6 @@ const createMessage = (
   content,
 });
 
-/** Délai avant la petite invitation près du bouton (ms). */
 const CHATBOT_NUDGE_DELAY_MS = 3 * 60 * 1000;
 const CHATBOT_NUDGE_STORAGE_KEY = "portfolio-chatbot-nudge-seen";
 
@@ -71,13 +57,29 @@ const fabBubbles: {
 export default function FloatingChatbot({
   streamProvider = defaultStreamChatProvider,
 }: FloatingChatbotProps) {
+  const t = useTranslations("chatbot");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [showNudge, setShowNudge] = useState(false);
   const nudgeTimeoutRef = useRef<number | null>(null);
   const scrollEndRef = useRef<HTMLDivElement | null>(null);
+
+  const suggestedQuestions = useMemo(
+    () => [t("suggested1"), t("suggested2"), t("suggested3")],
+    [t]
+  );
+
+  const resetWelcome = useCallback(() => {
+    setMessages([
+      createMessage("assistant", t("welcome"), "welcome"),
+    ]);
+  }, [t]);
+
+  useEffect(() => {
+    resetWelcome();
+  }, [resetWelcome]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -163,8 +165,7 @@ export default function FloatingChatbot({
       setMessages((prev) => {
         const next = [...prev];
         const idx = next.findIndex((m) => m.id === assistantId);
-        const err =
-          "Desole, je n'ai pas pu repondre pour le moment. Reessaie dans un instant.";
+        const err = t("error");
         if (idx !== -1) {
           next[idx] = { ...next[idx], content: err };
         } else {
@@ -203,7 +204,7 @@ export default function FloatingChatbot({
                 <span className="relative inline-flex h-full w-full overflow-hidden rounded-full border border-white/10 bg-background/80">
                   <Image
                     src={chatbotOtterSrc}
-                    alt={chatbotOtterAlt}
+                    alt={t("otterAlt")}
                     width={36}
                     height={36}
                     className="h-full w-full object-cover"
@@ -212,16 +213,16 @@ export default function FloatingChatbot({
               </span>
               <div>
                 <p className="bg-linear-to-r from-white via-white to-white/75 bg-clip-text text-sm font-semibold text-transparent">
-                  Le compagnon de Julie
+                  {t("title")}
                 </p>
-                <p className="text-xs text-muted-foreground">Assistant loutre</p>
+                <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="rounded-full p-2 text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
-              aria-label="Fermer le chatbot"
+              aria-label={t("closeChat")}
             >
               <X size={16} />
             </button>
@@ -243,7 +244,7 @@ export default function FloatingChatbot({
             ))}
             {showThinking && (
               <p className="text-xs text-muted-foreground">
-                Le compagnon reflechit...
+                {t("thinking")}
               </p>
             )}
             <div ref={scrollEndRef} aria-hidden className="h-px w-full shrink-0" />
@@ -270,14 +271,14 @@ export default function FloatingChatbot({
               <input
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Pose ta question..."
+                placeholder={t("placeholder")}
                 className="h-10 flex-1 rounded-xl border border-white/15 bg-white/5 px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-400/35 focus:ring-offset-2 focus:ring-offset-background"
               />
               <button
                 type="submit"
                 disabled={!canSend}
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-emerald-400 to-cyan-400 text-primary-foreground shadow-md shadow-emerald-500/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-                aria-label="Envoyer le message"
+                aria-label={t("send")}
               >
                 <Send size={16} />
               </button>
@@ -297,13 +298,13 @@ export default function FloatingChatbot({
         >
           <div className="relative rounded-2xl border border-white/10 bg-background/88 px-3.5 py-2.5 pr-9 text-foreground shadow-lg shadow-emerald-500/10 backdrop-blur-xl">
             <p className="text-xs leading-snug">
-              Hé, je suis la loutre — viens discuter avec moi !
+              {t("nudge")}
             </p>
             <button
               type="button"
               onClick={dismissNudge}
               className="absolute top-1.5 right-1.5 rounded-full p-1 text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
-              aria-label="Fermer le message"
+              aria-label={t("dismissNudge")}
             >
               <X size={14} aria-hidden />
             </button>
@@ -346,7 +347,7 @@ export default function FloatingChatbot({
               gradientPillInnerSurfaceClassName,
               "relative inline-flex h-14 w-14 items-center justify-center text-emerald-200 transition hover:scale-[1.03] hover:text-cyan-200"
             )}
-            aria-label="Ouvrir le chatbot"
+            aria-label={t("openFab")}
           >
             <Image
               src={chatbotOtterSrc}

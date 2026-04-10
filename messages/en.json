@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "siteName": "Julie’s portfolio",
+    "siteDescription": "Portfolio — front-end development, projects, and background."
+  },
+  "nav": {
+    "ariaMain": "Main navigation",
+    "home": "Home",
+    "projects": "Projects",
+    "skills": "Skills",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu",
+    "github": "GitHub (opens in new tab)",
+    "githubDisabled": "GitHub — not configured",
+    "email": "Email",
+    "githubEnvHint": "Add NEXT_PUBLIC_GITHUB_URL to .env.local, then restart npm run dev",
+    "emailEnvHint": "Add NEXT_PUBLIC_CONTACT_EMAIL or NEXT_PUBLIC_CONTACT_EMAIL_B64 to .env.local, then restart npm run dev",
+    "langSwitcher": "Site language",
+    "langFr": "Français",
+    "langEn": "English"
+  },
+  "footer": {
+    "aria": "Site footer",
+    "navAria": "Footer navigation",
+    "builtWith": "Built with Next.js"
+  },
+  "home": {
+    "title": "Creative web developer | Design & code 💻🎨",
+    "briefAria": "In brief",
+    "briefHeading": "In brief",
+    "brief1": "Front-end / creative dev",
+    "brief2": "Moselle, France & Luxembourg · remote / hybrid",
+    "brief3": "Drupal, WP, React",
+    "brief4": "Availability: TBD",
+    "viewProjects": "View projects",
+    "profilePhotoAlt": "{name} profile photo"
+  },
+  "availability": {
+    "open": "Available",
+    "closed": "Unavailable",
+    "openLong": "Open to opportunities",
+    "closedLong": "Not available right now",
+    "dotOpenTitle": "Available for work",
+    "dotClosedTitle": "Not available for work",
+    "dotOpenAria": "Available for work",
+    "dotClosedAria": "Not available for work"
+  },
+  "projectsPage": {
+    "title": "Projects",
+    "intro": "Interactive bento gallery — placeholders until real assets and links are wired up.",
+    "headingSr": "Projects"
+  },
+  "projectsGallery": {
+    "filterToolbar": "Filter projects",
+    "openProject": "Open project: {title}",
+    "placeholder": "Placeholder",
+    "categoryCode": "Code",
+    "categoryDesign": "Design"
+  },
+  "projectDetail": {
+    "close": "Close",
+    "stack": "Stack",
+    "stackAria": "Technologies used in this project"
+  },
+  "skillsPage": {
+    "metaTitle": "Skills",
+    "metaDescription": "Work history and education, with skills picked up along the way.",
+    "boardIntro": "Use the arrows to browse my profile quickly.",
+    "headingSr": "Skills and background",
+    "jobs": "Jobs",
+    "education": "Education",
+    "contract": "Contract: {value}",
+    "level": "Level: {value}",
+    "skillsHeading": "Skills",
+    "skillsAria": "Skills: {title}",
+    "prevSlide": "{title} — previous slide",
+    "nextSlide": "{title} — next slide",
+    "slidePosition": "{current} of {total}",
+    "dotsAria": "{title} markers",
+    "showEntry": "Show {title}",
+    "langHobbiesAria": "Languages and hobbies",
+    "languages": "Languages",
+    "languagesListAria": "Language levels",
+    "hobbies": "Hobbies",
+    "hobbiesListAria": "Interests"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "body": "This link goes nowhere — even the otter couldn’t find anything here.",
+    "otterAlt": "Illustration: otter with a salmon",
+    "home": "Back to home"
+  },
+  "chatbot": {
+    "otterAlt": "Smiling otter assistant holding a salmon, chatbot mascot",
+    "suggested1": "What projects have you worked on?",
+    "suggested2": "How can I contact you?",
+    "suggested3": "What technologies do you use?",
+    "welcome": "Hi! I’m Julie’s companion, an otter assistant. Ask me anything about her portfolio.",
+    "title": "Julie’s companion",
+    "subtitle": "Otter assistant",
+    "closeChat": "Close chatbot",
+    "thinking": "The companion is thinking…",
+    "placeholder": "Ask your question…",
+    "send": "Send message",
+    "openFab": "Open chatbot",
+    "nudge": "Hey — I’m the otter. Come say hi!",
+    "dismissNudge": "Dismiss message",
+    "closeSpotifyWindow": "Close Spotify window",
+    "error": "Sorry, I couldn’t reply just now. Try again in a moment."
+  },
+  "spotify": {
+    "openPlaylist": "Open Spotify playlist",
+    "closeOverlay": "Close Spotify window",
+    "dialogTitle": "Spotify playlist",
+    "dialogDescription": "Embedded Spotify player",
+    "closePlayer": "Close player",
+    "brand": "Spotify",
+    "iframeTitle": "Spotify playlist",
+    "defaultHint": "Default playlist — set NEXT_PUBLIC_SPOTIFY_PLAYLIST_ID in .env.local to use yours."
+  }
+}

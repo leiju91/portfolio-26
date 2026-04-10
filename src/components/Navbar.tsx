@@ -1,9 +1,10 @@
 "use client";
-import Link from "next/link";
+
 import { motion } from "framer-motion";
 import { Terminal, Mail, Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+
 import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,15 +12,19 @@ import {
   GradientPillFrame,
   gradientPillInnerSurfaceClassName,
 } from "@/components/ui/gradient-pill-frame";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { homeProfile } from "@/data/home-profile";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const tHome = useTranslations("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
-    setMobileNavOpen(false);
+    const id = window.setTimeout(() => setMobileNavOpen(false), 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   useEffect(() => {
@@ -58,13 +63,15 @@ export default function Navbar() {
       .join("")
       .slice(0, 2) || "?";
 
+  const photoAlt = tHome("profilePhotoAlt", { name: homeProfile.name });
+
   return (
     <motion.nav
       initial={{ y: -10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="fixed top-6 left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-3xl -translate-x-1/2"
-      aria-label="Main navigation"
+      aria-label={t("ariaMain")}
     >
       <div className="relative w-full">
         <GradientPillFrame>
@@ -82,7 +89,7 @@ export default function Navbar() {
                 {homeProfile.avatarSrc ? (
                   <AvatarImage
                     src={homeProfile.avatarSrc}
-                    alt={`${homeProfile.name} profile photo`}
+                    alt={photoAlt}
                   />
                 ) : null}
                 <AvatarFallback className="grid place-items-center text-xs font-semibold text-white/90">
@@ -103,7 +110,7 @@ export default function Navbar() {
                   href="/"
                   aria-current={pathname === "/" ? "page" : undefined}
                 >
-                  Home
+                  {t("home")}
                 </Link>
               </Button>
               <Button
@@ -117,7 +124,7 @@ export default function Navbar() {
                     pathname === "/projects" ? "page" : undefined
                   }
                 >
-                  Projects
+                  {t("projects")}
                 </Link>
               </Button>
               <Button
@@ -129,7 +136,7 @@ export default function Navbar() {
                   href="/skills"
                   aria-current={pathname === "/skills" ? "page" : undefined}
                 >
-                  Skills
+                  {t("skills")}
                 </Link>
               </Button>
             </div>
@@ -142,9 +149,7 @@ export default function Navbar() {
                 className="h-9 w-9 shrink-0 rounded-full border-white/10 bg-transparent hover:bg-white/10 sm:hidden"
                 aria-expanded={mobileNavOpen}
                 aria-controls="nav-mobile-links"
-                aria-label={
-                  mobileNavOpen ? "Close menu" : "Open menu"
-                }
+                aria-label={mobileNavOpen ? t("closeMenu") : t("openMenu")}
                 onClick={() => setMobileNavOpen((open) => !open)}
               >
                 {mobileNavOpen ? (
@@ -164,7 +169,7 @@ export default function Navbar() {
                     href={githubUrl}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label="GitHub (opens in new tab)"
+                    aria-label={t("github")}
                   >
                     <Terminal size={18} className="text-white/90" />
                   </a>
@@ -175,8 +180,8 @@ export default function Navbar() {
                   variant="outline"
                   size="icon"
                   disabled
-                  title="Add NEXT_PUBLIC_GITHUB_URL to .env.local, then restart npm run dev"
-                  aria-label="GitHub — not configured"
+                  title={t("githubEnvHint")}
+                  aria-label={t("githubDisabled")}
                   className="h-9 w-9 rounded-full border-white/10 bg-transparent opacity-50"
                 >
                   <Terminal size={18} className="text-white/90" />
@@ -185,12 +190,10 @@ export default function Navbar() {
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="Email"
+                aria-label={t("email")}
                 disabled={!resolvedEmail}
                 title={
-                  resolvedEmail
-                    ? undefined
-                    : "Add NEXT_PUBLIC_CONTACT_EMAIL or NEXT_PUBLIC_CONTACT_EMAIL_B64 to .env.local, then restart npm run dev"
+                  resolvedEmail ? undefined : t("emailEnvHint")
                 }
                 className="h-9 w-9 rounded-full border-white/10 bg-transparent hover:bg-white/10 disabled:opacity-50"
                 onClick={handleEmailClick}
@@ -206,7 +209,7 @@ export default function Navbar() {
             <button
               type="button"
               className="fixed inset-0 z-40 bg-black/45 sm:hidden"
-              aria-label="Close menu"
+              aria-label={t("closeMenu")}
               onClick={() => setMobileNavOpen(false)}
             />
             <div
@@ -227,7 +230,7 @@ export default function Navbar() {
                 aria-current={pathname === "/" ? "page" : undefined}
                 role="menuitem"
               >
-                Home
+                {t("home")}
               </Link>
             </Button>
             <Button
@@ -243,7 +246,7 @@ export default function Navbar() {
                 aria-current={pathname === "/projects" ? "page" : undefined}
                 role="menuitem"
               >
-                Projects
+                {t("projects")}
               </Link>
             </Button>
             <Button
@@ -259,7 +262,7 @@ export default function Navbar() {
                 aria-current={pathname === "/skills" ? "page" : undefined}
                 role="menuitem"
               >
-                Skills
+                {t("skills")}
               </Link>
             </Button>
             </div>

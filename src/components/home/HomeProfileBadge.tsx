@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReactElement } from "react";
 import {
   Avatar,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { GradientPillFrame } from "@/components/ui/gradient-pill-frame";
+import { Link } from "@/i18n/navigation";
 import { homeProfile } from "@/data/home-profile";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +32,12 @@ function initialsFromName(name: string): string {
 export function HomeProfileBadge({
   hydrated,
 }: HomeMotionReadyProps): ReactElement {
-  const { avatarSrc, name, title, openToWork } = homeProfile;
+  const t = useTranslations("home");
+  const tAvail = useTranslations("availability");
+  const { avatarSrc, name, openToWork } = homeProfile;
   const profileInitials = initialsFromName(name);
+  const title = t("title");
+  const photoAlt = t("profilePhotoAlt", { name });
 
   const off = { opacity: 0, y: 18 };
   const on = { opacity: 1, y: 0 };
@@ -63,7 +68,7 @@ export function HomeProfileBadge({
             className="border border-white/15 bg-linear-to-br from-muted to-background"
           >
             {avatarSrc ? (
-              <AvatarImage src={avatarSrc} alt={`${name} profile photo`} />
+              <AvatarImage src={avatarSrc} alt={photoAlt} />
             ) : null}
             <AvatarFallback className="grid place-items-center bg-linear-to-br from-muted to-background font-semibold text-white/90">
               {profileInitials}
@@ -76,9 +81,11 @@ export function HomeProfileBadge({
                 ? "bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.55)]"
                 : "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.55)]"
             )}
-            title={openToWork ? "Available for work" : "Not available for work"}
+            title={
+              openToWork ? tAvail("dotOpenTitle") : tAvail("dotClosedTitle")
+            }
             aria-label={
-              openToWork ? "Available for work" : "Not available for work"
+              openToWork ? tAvail("dotOpenAria") : tAvail("dotClosedAria")
             }
           />
         </div>
@@ -92,7 +99,7 @@ export function HomeProfileBadge({
 
         <GradientPillFrame className="mt-6 w-fit">
           <Button asChild variant="navGlass" size="navPill">
-            <Link href="/projects">View projects</Link>
+            <Link href="/projects">{t("viewProjects")}</Link>
           </Button>
         </GradientPillFrame>
       </motion.div>

@@ -1,4 +1,7 @@
+"use client";
+
 import { Calendar } from "lucide-react";
+import { useLocale } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -8,13 +11,13 @@ export type ProjectDetailDateProps = {
   className?: string;
 };
 
-const formatter = new Intl.DateTimeFormat("fr-FR", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-
 export function ProjectDetailDate({ isoDate, className }: ProjectDetailDateProps) {
+  const locale = useLocale();
+  const formatter = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
   const date = new Date(isoDate);
   const label = Number.isNaN(date.getTime()) ? isoDate : formatter.format(date);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ export function AvailabilityBadge({
   className,
 }: AvailabilityBadgeProps) {
   const reduceMotion = useReducedMotion();
+  const t = useTranslations("availability");
 
   const dotAnimate = available
     ? reduceMotion
@@ -36,9 +38,7 @@ export function AvailabilityBadge({
           : "border-amber-500/25 bg-amber-500/10 text-amber-100/85",
         className
       )}
-      aria-label={
-        available ? "Available for work" : "Not available at the moment"
-      }
+      aria-label={available ? t("openLong") : t("closedLong")}
     >
       <motion.span
         aria-hidden="true"
@@ -53,9 +53,7 @@ export function AvailabilityBadge({
         transition={dotTransition}
       />
       <span className="truncate text-xs font-medium sm:text-sm sm:whitespace-nowrap">
-        {available
-          ? "I'm available for work"
-          : "I'm not available for work"}
+        {available ? t("openLong") : t("closedLong")}
       </span>
     </Badge>
   );

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // Turbopack walks up the tree for lockfiles. A stray package-lock.json in a parent
 // folder makes the dev root wrong (wrong modules / 500). Pin to this repo.
@@ -12,6 +15,7 @@ const nextConfig: NextConfig = {
   // when creating `.next/dev/logs`. Disable unless you rely on Next's dev MCP server.
   experimental: {
     mcpServer: false,
+    optimizePackageImports: ["lucide-react", "framer-motion", "radix-ui"],
   },
   turbopack: {
     root: projectRoot,
@@ -27,4 +31,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

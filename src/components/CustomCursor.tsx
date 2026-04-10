@@ -21,7 +21,8 @@ export function CustomCursor() {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!fine.matches || reduce.matches) return;
-    setActive(true);
+    const id = requestAnimationFrame(() => setActive(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   useEffect(() => {
