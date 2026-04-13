@@ -371,6 +371,40 @@ const requestOpenAIStream = async (
   return full.trim();
 };
 
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+const isRetryableGeminiError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) return false;
+  const m = error.message.toLowerCase();
+  return (
+    m.includes("503") ||
+    m.includes("service unavailable") ||
+    m.includes("high demand") ||
+    m.includes("429") ||
+    m.includes("resource_exhausted") ||
+    m.includes("try again later") ||
+    (m.includes("temporarily") && m.includes("unavailable"))
+  );
+};
+
+const withGeminiRetries = async <T>(label: string, fn: () => Promise<T>): Promise<T> => {
+  const maxAttempts = 4;
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (e) {
+      lastError = e;
+      if (!isRetryableGeminiError(e) || attempt === maxAttempts) throw e;
+      const delayMs =
+        Math.min(8_000, 500 * 2 ** attempt) + Math.floor(Math.random() * 250);
+      console.warn(`[/api/chat] ${label} attempt ${attempt}/${maxAttempts} failed, retry in ${delayMs}ms`, e);
+      await sleep(delayMs);
+    }
+  }
+  throw lastError;
+};
+
 const requestGemini = async (messages: ChatMessage[]) => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -391,15 +425,17 @@ const requestGemini = async (messages: ChatMessage[]) => {
     systemInstruction: buildSystemPrompt(),
   });
 
-  const result = await geminiModel.generateContent({
-    contents: messages.map((message) => ({
-      role: message.role === "assistant" ? "model" : "user",
-      parts: [{ text: message.content }],
-    })),
-    generationConfig: {
-      temperature: 0.65,
-    },
-  });
+  const result = await withGeminiRetries("Gemini generateContent", () =>
+    geminiModel.generateContent({
+      contents: messages.map((message) => ({
+        role: message.role === "assistant" ? "model" : "user",
+        parts: [{ text: message.content }],
+      })),
+      generationConfig: {
+        temperature: 0.65,
+      },
+    })
+  );
 
   const text = result.response.text()?.trim();
   if (text) return text;
@@ -432,15 +468,17 @@ const requestGeminiStream = async (
     systemInstruction: buildSystemPrompt(),
   });
 
-  const streamResult = await geminiModel.generateContentStream({
-    contents: messages.map((message) => ({
-      role: message.role === "assistant" ? "model" : "user",
-      parts: [{ text: message.content }],
-    })),
-    generationConfig: {
-      temperature: 0.65,
-    },
-  });
+  const streamResult = await withGeminiRetries("Gemini generateContentStream", () =>
+    geminiModel.generateContentStream({
+      contents: messages.map((message) => ({
+        role: message.role === "assistant" ? "model" : "user",
+        parts: [{ text: message.content }],
+      })),
+      generationConfig: {
+        temperature: 0.65,
+      },
+    })
+  );
 
   let full = "";
   for await (const chunk of streamResult.stream) {
@@ -613,6 +651,13 @@ const createTextStreamResponse = (
           ) {
             fallback =
               "Mon courant marin est surcharge pour le moment (quota API atteint). Reessaie dans quelques minutes ou change de provider (OpenAI). 🌊";
+          } else if (
+            message.includes("503") ||
+            message.toLowerCase().includes("high demand") ||
+            message.toLowerCase().includes("service unavailable")
+          ) {
+            fallback =
+              "Le modele IA est sature (demande elevee cote Google). Reessaie dans quelques secondes, ou mets GEMINI_MODEL=gemini-2.0-flash dans .env.local. 🌊";
           }
           controller.enqueue(encoder.encode(fallback));
         } finally {
@@ -737,6 +782,20 @@ export async function POST(request: Request) {
         {
           answer:
             "Mon courant marin est surcharge pour le moment (quota API atteint). Reessaie dans quelques minutes ou change de provider (OpenAI). 🌊",
+        },
+        { status: 200 }
+      );
+    }
+
+    if (
+      message.includes("503") ||
+      message.toLowerCase().includes("high demand") ||
+      message.toLowerCase().includes("service unavailable")
+    ) {
+      return NextResponse.json(
+        {
+          answer:
+            "Le modele IA est sature (demande elevee cote Google). Reessaie dans quelques secondes, ou mets GEMINI_MODEL=gemini-2.0-flash dans .env.local. 🌊",
         },
         { status: 200 }
       );

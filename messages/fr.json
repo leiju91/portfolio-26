@@ -54,8 +54,14 @@
     "filterToolbar": "Filtrer les projets",
     "openProject": "Ouvrir le projet : {title}",
     "placeholder": "Placeholder",
+    "categoryAll": "Tous",
     "categoryCode": "Code",
-    "categoryDesign": "Design"
+    "categoryDesign": "Design",
+    "scrollRegion": "Liste des projets : faire défiler verticalement pour changer de carte",
+    "scrollHint": "Survolez cette zone et utilisez la molette ou le pistelet : le projet change. Sur le premier ou le dernier projet, la page défile normalement.",
+    "emptyFiltered": "Aucun projet ne correspond à ce filtre.",
+    "goToProject": "Afficher le projet : {title}",
+    "slideNavigation": "Accès rapide aux projets"
   },
   "projectDetail": {
     "close": "Fermer",

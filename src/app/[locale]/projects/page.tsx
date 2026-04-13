@@ -4,6 +4,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProjectsBentoGallery } from "@/components/projects/ProjectsBentoGallery";
 import { getProjects } from "@/data/projects";
 
+import { ProjectsScrollLock } from "./ProjectsScrollLock";
+
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -22,14 +24,13 @@ export default async function ProjectsPage(props: Props) {
   const projects = getProjects(locale);
 
   return (
-    <main className="flex flex-1 flex-col px-6 pb-16 pt-28">
-      <header className="mx-auto mb-10 max-w-3xl text-center">
+    <ProjectsScrollLock>
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 pb-6 pt-28">
         <h1 className="sr-only">{t("headingSr")}</h1>
-        <p className="text-sm text-white/55 sm:text-base">{t("intro")}</p>
-      </header>
-      <div className="mx-auto max-w-5xl">
-        <ProjectsBentoGallery items={projects} />
-      </div>
-    </main>
+        <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col">
+          <ProjectsBentoGallery items={projects} />
+        </div>
+      </main>
+    </ProjectsScrollLock>
   );
 }

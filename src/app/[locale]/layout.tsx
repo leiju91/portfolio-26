@@ -76,7 +76,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <CustomCursor />
           <FixedLocaleSwitcher />
           <Navbar />
-          <div className="flex flex-1 flex-col">{children}</div>
+          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
           <Footer />
           <FloatingChatbot />
         </NextIntlClientProvider>

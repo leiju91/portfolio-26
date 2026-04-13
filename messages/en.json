@@ -54,8 +54,14 @@
     "filterToolbar": "Filter projects",
     "openProject": "Open project: {title}",
     "placeholder": "Placeholder",
+    "categoryAll": "All",
     "categoryCode": "Code",
-    "categoryDesign": "Design"
+    "categoryDesign": "Design",
+    "scrollRegion": "Projects list: scroll vertically to change the card",
+    "scrollHint": "Hover this area and scroll with mouse or trackpad to change projects. On the first or last project, the page scrolls as usual.",
+    "emptyFiltered": "No projects match this filter.",
+    "goToProject": "Go to project: {title}",
+    "slideNavigation": "Quick project navigation"
   },
   "projectDetail": {
     "close": "Close",
