@@ -119,9 +119,10 @@ Ne reinvente jamais son parcours, ses competences ou son experience.
 ${CV_KNOWLEDGE_BASE}
 
 Ton de voix:
-- Sois professionnel mais tres enthousiaste.
-- Utilise un champ lexical marin leger (exemples: "Bienvenue a bord !", "Plongeons dans ses projets", "C'est limpide comme de l'eau de roche !").
-- Ajoute quelques emojis lies a la mer ou aux animaux (ex: 🦦, 🌊, ✨), sans en abuser.
+- Sois professionnel, chaleureux et precis.
+- Le style loutre/marin doit rester leger et discret (pas systematique).
+- Evite les formulations trop enfantines ou theatrales.
+- Limite les emojis a 0 ou 1 par reponse.
 
 Style des reponses:
 - Reponds dans la langue du message de l'utilisateur (francais ou anglais).
@@ -129,6 +130,9 @@ Style des reponses:
 - Pour les hobbies ou centres d'interet : regroupe les themes (ex. creation, sport, detente, culture) et donne de la couleur en une ou deux phrases, sans recopier mot pour mot la liste du portfolio.
 - Pour ce qu'elle cherche comme poste ou zone geographique : t'appuie uniquement sur le bloc "Envies professionnelles" de la base ; reformule avec tes mots, en restant fidele au sens.
 - Tu peux utiliser quelques puces seulement pour les competences techniques ou le parcours date, si la question est "liste de stack" ou chronologie.
+- Quand c'est pertinent, ajoute une mini ligne de credibilite en fin de reponse:
+  "Source: portfolio de Julie (CV + donnees projets/competences)."
+- Si la question concerne une info datable (experience, formation, techno), cite 1 ou 2 reperes concrets de la base (ex: entreprise/periode/projet), sans inventer.
 
 Regles d'or:
 - Si la question n'est pas couverte par la base de connaissances, reponds exactement:
@@ -510,12 +514,21 @@ const normalizeText = (value: string) =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
+const hasWholeWord = (text: string, word: string) =>
+  new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(text);
+
 const buildPersonalFactsAnswer = (messages: ChatMessage[]): string | null => {
   const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
   if (!latestUserMessage?.content) return null;
 
   const text = normalizeText(latestUserMessage.content);
-  const asksAge = text.includes("age");
+  const asksAge =
+    text === "age" ||
+    /\bquel\s+age\b/.test(text) ||
+    /\bage\s+de\s+julie\b/.test(text) ||
+    /\bson\s+age\b/.test(text) ||
+    /\btu\s+as\s+quel\s+age\b/.test(text) ||
+    /\bcest\s+quoi\s+son\s+age\b/.test(text);
   const asksZodiac = text.includes("signe astro") || text.includes("signe astrologique");
   const asksAscendant = text.includes("ascendant");
 
@@ -581,6 +594,17 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
     return "Pour contacter Julie: julie.lacresse@gmail.com 📩";
   }
 
+  const asksAiNature =
+    text.includes("ia") ||
+    text.includes("intelligence artificielle") ||
+    text.includes("ai") ||
+    text.includes("statique") ||
+    text.includes("pre enregistre") ||
+    text.includes("preenregistre");
+  if (asksAiNature) {
+    return "Je suis un assistant IA relie au portfolio de Julie. Mes reponses utilisent une base de connaissances (CV + projets + competences) et quelques reponses directes existent pour des infos precises comme le contact.";
+  }
+
   const asksLocation =
     text.includes("ou habite") || text.includes("localisation") || text.includes("ou est basee");
   if (asksLocation) {
@@ -588,6 +612,139 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
   }
 
   return null;
+};
+
+const buildRecruiterEasterEggAnswer = (messages: ChatMessage[]): string | null => {
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+  if (!latestUserMessage?.content) return null;
+
+  const text = normalizeText(latestUserMessage.content);
+  const isRecruiterCommand =
+    text.includes("otter://recruiter") ||
+    text.includes("recruiter mode") ||
+    text.includes("mode recruteur");
+
+  if (!isRecruiterCommand) return null;
+
+  const provider = getProvider();
+  const providerLabel = provider === "openai" ? "OpenAI" : "Gemini";
+
+  return [
+    "🧪 Easter egg recruteur technique active.",
+    `- IA active: ${providerLabel} (switchable via AI_PROVIDER)`,
+    "- Endpoint: /api/chat (Next.js Route Handler, streaming texte)",
+    "- Contexte: CV statique + donnees portfolio FR/EN injectees au prompt systeme",
+    "- Garde-fous: rate limit memoire + fallback + reponses directes sur infos clefs",
+    "- UX: streaming token par token dans le widget flottant React",
+  ].join("\n");
+};
+
+const unique = <T,>(items: T[]) => Array.from(new Set(items));
+
+const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+  if (!latestUserMessage?.content) return null;
+
+  const rawText = latestUserMessage.content;
+  const text = normalizeText(rawText);
+  const skills = getSkillsBundle("fr");
+  const projects = getProjects("fr");
+
+  const asksInternships =
+    text.includes("stage") ||
+    text.includes("stages") ||
+    text.includes("internship") ||
+    text.includes("internships");
+
+  if (asksInternships) {
+    const internships = skills.workExperience.filter((entry) =>
+      normalizeText(entry.contractType ?? "").includes("stage")
+    );
+
+    if (internships.length === 0) {
+      return "Je n'ai pas de stage enregistre dans mes donnees actuelles.";
+    }
+
+    const internshipLines = internships
+      .map(
+        (entry) =>
+          `- ${entry.title} chez ${entry.organization} (${entry.period}${entry.location ? `, ${entry.location}` : ""})`
+      )
+      .join("\n");
+
+    return `Oui, Julie a deja fait des stages.\n${internshipLines}\nSource: portfolio de Julie (experiences).`;
+  }
+
+  const asksSkillCheck =
+    text.includes("connait") ||
+    text.includes("connais") ||
+    text.includes("maitrise") ||
+    text.includes("sait faire") ||
+    text.includes("utilise") ||
+    text.includes("know") ||
+    text.includes("knows") ||
+    text.includes("experienced with");
+
+  if (!asksSkillCheck) return null;
+
+  const allKnownSkills = unique(
+    [
+      ...skills.workExperience.flatMap((entry) => entry.skills),
+      ...skills.education.flatMap((entry) => entry.skills),
+      ...projects.flatMap((project) => project.technologies),
+    ].map((item) => item.trim())
+  );
+
+  const knownSkillWithNormalized = allKnownSkills
+    .map((label) => ({ label, normalized: normalizeText(label) }))
+    .sort((a, b) => b.normalized.length - a.normalized.length);
+
+  const matchedSkill = knownSkillWithNormalized.find(
+    (skill) => skill.normalized.length >= 2 && text.includes(skill.normalized)
+  );
+
+  if (!matchedSkill) {
+    const strongerSkills = unique(projects.flatMap((project) => project.technologies)).slice(0, 6);
+    return `Je n'ai pas trouve cette techno exactement dans mes donnees. En revanche, Julie travaille notamment avec: ${strongerSkills.join(", ")}.`;
+  }
+
+  const relatedProjects = projects.filter((project) =>
+    project.technologies.some((tech) => {
+      const normalizedTech = normalizeText(tech);
+      return (
+        normalizedTech.includes(matchedSkill.normalized) ||
+        matchedSkill.normalized.includes(normalizedTech)
+      );
+    })
+  );
+
+  const relatedExperiences = skills.workExperience.filter((entry) =>
+    entry.skills.some((skill) => {
+      const normalizedSkill = normalizeText(skill);
+      return (
+        normalizedSkill.includes(matchedSkill.normalized) ||
+        matchedSkill.normalized.includes(normalizedSkill)
+      );
+    })
+  );
+
+  const projectHint =
+    relatedProjects.length > 0
+      ? `Projet(s) a voir dans la section Projets: ${relatedProjects
+          .slice(0, 2)
+          .map((project) => project.title)
+          .join(", ")}.`
+      : "Je n'ai pas de projet tagge avec cette techno pour l'instant.";
+
+  const experienceHint =
+    relatedExperiences.length > 0
+      ? `Contexte experience: ${relatedExperiences
+          .slice(0, 2)
+          .map((entry) => `${entry.title} chez ${entry.organization}`)
+          .join(" ; ")}.`
+      : "Pas de mention explicite en experience pro dans la base actuelle.";
+
+  return `Oui, Julie connait ${matchedSkill.label}. ${projectHint} ${experienceHint} Source: portfolio de Julie (competences + projets).`;
 };
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -709,6 +866,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ answer: welcomeAnswer });
     }
 
+    const experienceAwareAnswer = buildExperienceAwareAnswer(messages);
+    if (experienceAwareAnswer) {
+      if (wantsStream) {
+        return createTextStreamResponse(async (write) => {
+          await write(experienceAwareAnswer);
+        });
+      }
+      return NextResponse.json({ answer: experienceAwareAnswer });
+    }
+
     const personalFactsAnswer = buildPersonalFactsAnswer(messages);
     if (personalFactsAnswer) {
       if (wantsStream) {
@@ -727,6 +894,16 @@ export async function POST(request: Request) {
         });
       }
       return NextResponse.json({ answer: directKnowledgeAnswer });
+    }
+
+    const recruiterEasterEggAnswer = buildRecruiterEasterEggAnswer(messages);
+    if (recruiterEasterEggAnswer) {
+      if (wantsStream) {
+        return createTextStreamResponse(async (write) => {
+          await write(recruiterEasterEggAnswer);
+        });
+      }
+      return NextResponse.json({ answer: recruiterEasterEggAnswer });
     }
 
     if (wantsStream) {

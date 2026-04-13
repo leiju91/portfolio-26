@@ -1,8 +1,13 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import {
-  ImageIcon,
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "framer-motion";
+import {
   Laptop,
   LayoutGrid,
   Palette,
@@ -15,6 +20,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type MouseEvent,
   type TouchEvent,
 } from "react";
 import { useTranslations } from "next-intl";
@@ -31,6 +37,11 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 const WHEEL_THRESHOLD = 52;
 const WHEEL_LOCK_MS = 480;
 const SWIPE_MIN_PX = 72;
+const TILT_MAX_DEG = 7;
+
+function getProjectMediaLayoutId(projectId: string): string {
+  return `project-media-${projectId}`;
+}
 
 function matchesFilter(
   project: Project,
@@ -54,11 +65,25 @@ function BentoCard({
   placeholderLabel,
 }: BentoCardProps) {
   const reduceMotion = useReducedMotion();
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
+
+  const onMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
+    if (reduceMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const rotateY = (x - 0.5) * (TILT_MAX_DEG * 2);
+    const rotateX = (0.5 - y) * (TILT_MAX_DEG * 2);
+    setTilt({ rotateX, rotateY });
+  };
+
+  const resetTilt = () => setTilt({ rotateX: 0, rotateY: 0 });
 
   return (
     <motion.button
       type="button"
       initial={false}
+      animate={reduceMotion ? undefined : tilt}
       whileHover={
         reduceMotion
           ? undefined
@@ -71,8 +96,11 @@ function BentoCard({
       whileTap={
         reduceMotion ? undefined : { scale: 0.99, transition: { duration: 0.15 } }
       }
+      onMouseMove={onMouseMove}
+      onMouseLeave={resetTilt}
       onClick={() => onOpenProject(project)}
       aria-label={openProjectLabel(project.title)}
+      style={reduceMotion ? undefined : { transformPerspective: 900 }}
       className={cn(
         "group relative flex w-full max-w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-background/72 text-left shadow-lg backdrop-blur-xl outline-none",
         "focus-visible:ring-2 focus-visible:ring-emerald-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -86,19 +114,29 @@ function BentoCard({
         aria-hidden
       />
       <div className="relative flex min-h-0 flex-1 flex-col p-2.5 sm:p-3.5 lg:p-4">
-        <div
-          className={cn(
-            "mx-auto mb-2 flex aspect-square w-full max-w-60 shrink-0 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/18 bg-white/6 p-3 text-center backdrop-blur-sm sm:mb-2.5 sm:max-w-64 sm:gap-2 sm:p-3.5 md:max-w-72 lg:max-w-80"
-          )}
-        >
-          <ImageIcon
-            className="size-8 text-white/45 transition-colors group-hover:text-white/60 sm:size-9 md:size-10"
-            strokeWidth={1.25}
-            aria-hidden
-          />
-          <span className="text-[0.6rem] font-medium uppercase tracking-widest text-white/40 sm:text-[0.65rem]">
-            {placeholderLabel}
-          </span>
+        <div className="mx-auto mb-2 aspect-square w-full max-w-60 shrink-0 sm:mb-2.5 sm:max-w-64 md:max-w-72 lg:max-w-80">
+          <motion.div
+            layoutId={getProjectMediaLayoutId(project.id)}
+            className="relative h-full w-full overflow-hidden rounded-xl border border-white/20 bg-white/8"
+          >
+            <Image
+              src={project.coverImage.src}
+              alt={project.coverImage.alt}
+              fill
+              sizes="(min-width: 1024px) 360px, (min-width: 768px) 320px, 70vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-0 bg-linear-to-br opacity-45",
+                project.placeholderClass
+              )}
+              aria-hidden
+            />
+            <span className="absolute right-2 bottom-2 rounded-full border border-white/20 bg-black/40 px-2 py-1 text-[0.6rem] font-medium uppercase tracking-widest text-white/75 backdrop-blur-sm sm:text-[0.65rem]">
+              {placeholderLabel}
+            </span>
+          </motion.div>
         </div>
         <header className="mt-auto shrink-0 space-y-0.5">
           <span className="block text-sm font-semibold tracking-tight text-white/95 sm:text-[0.9375rem]">
@@ -289,14 +327,18 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
   const slideDuration = reduceMotion ? 0.12 : 0.32;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <ProjectDetailDialog
-        project={dialogProject}
-        open={dialogOpen}
-        onOpenChange={(next) => {
-          if (!next) setDialogProject(null);
-        }}
-      />
+    <LayoutGroup id="projects-gallery">
+      <div className="flex min-h-0 flex-1 flex-col gap-4">
+        <ProjectDetailDialog
+          project={dialogProject}
+          open={dialogOpen}
+          mediaLayoutId={
+            dialogProject ? getProjectMediaLayoutId(dialogProject.id) : null
+          }
+          onOpenChange={(next) => {
+            if (!next) setDialogProject(null);
+          }}
+        />
 
       <div
         className="flex shrink-0 flex-wrap items-center justify-center gap-2 py-1 sm:gap-2.5 sm:py-2"
@@ -404,6 +446,7 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </LayoutGroup>
   );
 }

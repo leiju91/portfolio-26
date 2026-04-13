@@ -17,7 +17,8 @@
     "emailEnvHint": "Add NEXT_PUBLIC_CONTACT_EMAIL or NEXT_PUBLIC_CONTACT_EMAIL_B64 to .env.local, then restart npm run dev",
     "langSwitcher": "Site language",
     "langFr": "Français",
-    "langEn": "English"
+    "langEn": "English",
+    "skipToContent": "Skip to content"
   },
   "footer": {
     "aria": "Site footer",
@@ -110,7 +111,7 @@
     "placeholder": "Ask your question…",
     "send": "Send message",
     "openFab": "Open chatbot",
-    "nudge": "Hey — I’m the otter. Come say hi!",
+    "nudge": "Portfolio AI assistant: ask me about projects, stack, or experience.",
     "dismissNudge": "Dismiss message",
     "closeSpotifyWindow": "Close Spotify window",
     "error": "Sorry, I couldn’t reply just now. Try again in a moment."

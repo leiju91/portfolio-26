@@ -17,10 +17,12 @@ import { cn } from "@/lib/utils";
 import { homeProfile } from "@/data/home-profile";
 
 export default function Navbar() {
+  const CHATBOT_EMAIL_HINT_EVENT = "chatbot:highlight-email";
   const pathname = usePathname();
   const t = useTranslations("nav");
   const tHome = useTranslations("home");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isEmailHintActive, setIsEmailHintActive] = useState(false);
 
   useEffect(() => {
     const id = window.setTimeout(() => setMobileNavOpen(false), 0);
@@ -35,6 +37,28 @@ export default function Navbar() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [mobileNavOpen]);
+
+  useEffect(() => {
+    let timeoutId: number | null = null;
+    const onHighlightEmail = () => {
+      setIsEmailHintActive(true);
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+      timeoutId = window.setTimeout(() => {
+        setIsEmailHintActive(false);
+        timeoutId = null;
+      }, 5000);
+    };
+
+    window.addEventListener(CHATBOT_EMAIL_HINT_EVENT, onHighlightEmail);
+    return () => {
+      window.removeEventListener(CHATBOT_EMAIL_HINT_EVENT, onHighlightEmail);
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, []);
   const githubUrl = (process.env.NEXT_PUBLIC_GITHUB_URL ?? "").trim();
   const contactEmailPlain = (process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "").trim();
   const mailB64 = (process.env.NEXT_PUBLIC_CONTACT_EMAIL_B64 ?? "").trim();
@@ -195,10 +219,16 @@ export default function Navbar() {
                 title={
                   resolvedEmail ? undefined : t("emailEnvHint")
                 }
-                className="h-9 w-9 rounded-full border-white/10 bg-transparent hover:bg-white/10 disabled:opacity-50"
+                className={cn(
+                  "h-9 w-9 rounded-full border-white/10 bg-transparent hover:bg-white/10 disabled:opacity-50",
+                  isEmailHintActive && "nav-email-hint"
+                )}
                 onClick={handleEmailClick}
               >
-                <Mail size={18} className="text-white/90" />
+                <Mail
+                  size={18}
+                  className={cn("text-white/90", isEmailHintActive && "nav-email-hint-icon")}
+                />
               </Button>
             </div>
           </div>

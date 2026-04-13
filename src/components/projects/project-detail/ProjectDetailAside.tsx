@@ -11,7 +11,7 @@ export function ProjectDetailAside({ children, className }: ProjectDetailAsidePr
   return (
     <aside
       className={cn(
-        "flex min-h-0 flex-col bg-background/88 p-6 sm:p-8 md:rounded-r-2xl",
+        "flex h-full min-h-0 flex-col bg-background/88 p-6 sm:p-8 md:rounded-r-2xl",
         className
       )}
     >

@@ -17,12 +17,14 @@ import { ProjectDetailTitle } from "./ProjectDetailTitle";
 export type ProjectDetailDialogProps = {
   project: Project | null;
   open: boolean;
+  mediaLayoutId?: string | null;
   onOpenChange: (open: boolean) => void;
 };
 
 export function ProjectDetailDialog({
   project,
   open,
+  mediaLayoutId,
   onOpenChange,
 }: ProjectDetailDialogProps) {
   return (
@@ -45,7 +47,12 @@ export function ProjectDetailDialog({
             <div className="relative">
               <ProjectDetailCloseButton />
               <ProjectDetailLayout
-                media={<ProjectDetailMedia project={project} />}
+                media={
+                  <ProjectDetailMedia
+                    project={project}
+                    mediaLayoutId={mediaLayoutId}
+                  />
+                }
                 aside={
                   <ProjectDetailAside>
                     <Dialog.Title asChild>

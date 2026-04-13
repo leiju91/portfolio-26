@@ -42,6 +42,7 @@ const createMessage = (
 
 const CHATBOT_NUDGE_DELAY_MS = 3 * 60 * 1000;
 const CHATBOT_NUDGE_STORAGE_KEY = "portfolio-chatbot-nudge-seen";
+const CHATBOT_EMAIL_HINT_EVENT = "chatbot:highlight-email";
 
 const fabBubbles: {
   drift: string;
@@ -65,6 +66,7 @@ export default function FloatingChatbot({
   const [showNudge, setShowNudge] = useState(false);
   const nudgeTimeoutRef = useRef<number | null>(null);
   const scrollEndRef = useRef<HTMLDivElement | null>(null);
+  const emailHintTriggeredRef = useRef(false);
 
   const suggestedQuestions = useMemo(
     () => [t("suggested1"), t("suggested2"), t("suggested3")],
@@ -133,6 +135,20 @@ export default function FloatingChatbot({
     lastMessage?.role === "assistant" &&
     lastMessage.content.length === 0;
 
+  const maybeTriggerEmailHint = useCallback((assistantText: string) => {
+    if (emailHintTriggeredRef.current) return;
+    const normalized = assistantText
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    const suggestsEmailContact =
+      normalized.includes("contacter julie") &&
+      normalized.includes("email");
+    if (!suggestsEmailContact) return;
+    emailHintTriggeredRef.current = true;
+    window.dispatchEvent(new CustomEvent(CHATBOT_EMAIL_HINT_EVENT));
+  }, []);
+
   const sendMessage = async (content: string) => {
     const userText = content.trim();
     if (!userText || isLoading) return;
@@ -145,12 +161,14 @@ export default function FloatingChatbot({
     setMessages(conversation);
     setInput("");
     setIsLoading(true);
+    emailHintTriggeredRef.current = false;
 
     try {
       await streamProvider({
         messages: [...messages, nextUserMessage],
         userInput: userText,
         onDelta: (accumulated) => {
+          maybeTriggerEmailHint(accumulated);
           setMessages((prev) => {
             const next = [...prev];
             const idx = next.findIndex((m) => m.id === assistantId);

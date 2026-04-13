@@ -13,7 +13,11 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main id="home" className="flex flex-1 flex-col px-6 pb-10 pt-28">
+    <main
+      id="main-content"
+      className="flex flex-1 flex-col px-6 pb-10 pt-28"
+      tabIndex={-1}
+    >
       <div className="flex flex-1 flex-col items-center justify-center">
         <header className="flex w-full min-w-0 flex-col items-center text-center">
           <HomeProfileBadge hydrated={hydrated} />

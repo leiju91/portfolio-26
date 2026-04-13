@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 import type { Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
@@ -6,11 +7,17 @@ import { cn } from "@/lib/utils";
 export type ProjectDetailMediaProps = {
   project: Project;
   className?: string;
+  mediaLayoutId?: string | null;
 };
 
-export function ProjectDetailMedia({ project, className }: ProjectDetailMediaProps) {
+export function ProjectDetailMedia({
+  project,
+  className,
+  mediaLayoutId,
+}: ProjectDetailMediaProps) {
   return (
-    <div
+    <motion.div
+      layoutId={mediaLayoutId ?? undefined}
       className={cn(
         "relative isolate h-full min-h-48 w-full overflow-hidden md:min-h-0",
         className
@@ -18,7 +25,7 @@ export function ProjectDetailMedia({ project, className }: ProjectDetailMediaPro
     >
       <div
         className={cn(
-          "pointer-events-none absolute inset-0 z-[1] bg-linear-to-br opacity-50 md:opacity-40",
+          "pointer-events-none absolute inset-0 z-1 bg-linear-to-br opacity-50 md:opacity-40",
           project.placeholderClass
         )}
         aria-hidden
@@ -31,6 +38,6 @@ export function ProjectDetailMedia({ project, className }: ProjectDetailMediaPro
         className="object-cover"
         priority
       />
-    </div>
+    </motion.div>
   );
 }
