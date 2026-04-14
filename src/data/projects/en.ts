@@ -3,24 +3,60 @@ import type { Project } from "./types";
 export const projectsEn: Project[] = [
   {
     id: "p1",
-    title: "Featured concept",
-    summary: "Highlighted tile — hero visual and case-study link to wire up.",
-    date: "2025-02-12",
+    title: "Olivier Minaire",
+    summary: "One-page showcase website built with HTML/CSS, Builder, and Gulp.",
+    date: "2026-04-14",
     description:
-      "Prototype of an e-commerce detail page with restrained typography and a prominent CTA. Spacing follows an 8px grid; colors match the brand palette. Next steps: CMS integration and accessibility checks (contrast, focus).",
+      "One-page website project created for Olivier Minaire using an HTML/CSS foundation. The front-end workflow relies on Builder and Gulp to organize assets, optimize files, and speed up production.",
     coverImage: {
-      src: "https://picsum.photos/seed/portfolio-p1/960/1200",
-      alt: "Preview of the Featured concept project",
+      src: "https://picsum.photos/seed/portfolio-olivier-minaire/1200/900",
+      alt: "Temporary preview of the Olivier Minaire project",
     },
-    categories: ["code", "design"],
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Next.js"],
+    categories: ["code"],
+    technologies: ["HTML", "CSS", "Builder", "Gulp"],
     colSpan: 2,
-    rowSpan: 2,
+    rowSpan: 1,
     placeholderClass:
       "from-emerald-400/40 via-cyan-400/28 to-fuchsia-400/32",
   },
   {
     id: "p2",
+    title: "idemaquapro",
+    summary:
+      "One-page HTML/CSS website with contact form sending via PHPMailer.",
+    date: "2026-04-14",
+    description:
+      "One-page front-end project for idemaquapro built with HTML/CSS and a contact form integrated with PHPMailer. The goal was a clear, fast, and maintainable website.",
+    coverImage: {
+      src: "https://picsum.photos/seed/portfolio-idemaquapro/1200/900",
+      alt: "Temporary preview of the idemaquapro project",
+    },
+    categories: ["code"],
+    technologies: ["HTML", "CSS", "PHPMailer"],
+    colSpan: 2,
+    rowSpan: 1,
+    placeholderClass: "from-cyan-400/35 via-emerald-400/24 to-sky-400/30",
+  },
+  {
+    id: "p3",
+    title: "Movie Explorer (TMDB)",
+    summary:
+      "React app connected to The Movie Database API (temporary image).",
+    date: "2026-04-14",
+    description:
+      "React application that calls The Movie Database API to display movies, search titles, and view details. The UI is built with Tailwind CSS and shadcn/ui components for a clean and modern experience. The final project image will be added later.",
+    coverImage: {
+      src: "https://picsum.photos/seed/portfolio-p8/1200/900",
+      alt: "Temporary preview for the Movie Explorer project (final image coming soon)",
+    },
+    categories: ["code"],
+    technologies: ["React", "Tailwind CSS", "shadcn/ui", "TMDB API"],
+    colSpan: 2,
+    rowSpan: 1,
+    placeholderClass: "from-sky-400/35 via-indigo-400/28 to-violet-400/30",
+  },
+  {
+    id: "p4",
     title: "Tippex Advertising Poster (A3)",
     summary: "A3 print advertising poster designed for Tippex.",
     date: "2016-06-01",
@@ -37,58 +73,7 @@ export const projectsEn: Project[] = [
     placeholderClass: "from-cyan-400/35 to-emerald-400/22",
   },
   {
-    id: "p3",
-    title: "Landing draft",
-    summary: "Short block for a landing page.",
-    date: "2025-01-20",
-    description:
-      "One-page landing sketch: hero with social proof, feature grid, and a short form. Copy is indicative; visuals will come from the design system.",
-    coverImage: {
-      src: "https://picsum.photos/seed/portfolio-p3/960/1200",
-      alt: "Preview of the Landing draft project",
-    },
-    categories: ["code"],
-    technologies: ["HTML", "CSS", "React"],
-    colSpan: 1,
-    rowSpan: 1,
-    placeholderClass: "from-fuchsia-400/32 to-cyan-400/18",
-  },
-  {
-    id: "p4",
-    title: "Wide showcase",
-    summary: "Horizontal format — great for wide mocks.",
-    date: "2024-09-15",
-    description:
-      "A “feature row” module meant for 16:9 product screenshots. Large title type, short paragraph, and a “Learn more” link. Responsive: stacks on small screens.",
-    coverImage: {
-      src: "https://picsum.photos/seed/portfolio-p4/1200/800",
-      alt: "Preview of the Wide showcase project",
-    },
-    categories: ["code"],
-    technologies: ["HTML", "CSS", "JavaScript"],
-    colSpan: 2,
-    rowSpan: 1,
-    placeholderClass: "from-emerald-400/30 via-fuchsia-400/22 to-cyan-400/25",
-  },
-  {
     id: "p5",
-    title: "Tooling / stack",
-    summary: "Tall tile — logos or technical stack.",
-    date: "2024-12-01",
-    description:
-      "Snapshot of project tooling (Next.js, design tokens, CI). A team reference for versions, doc links, and commit conventions.",
-    coverImage: {
-      src: "https://picsum.photos/seed/portfolio-p5/800/1400",
-      alt: "Preview of the Tooling / stack project",
-    },
-    categories: ["code", "design"],
-    technologies: ["Next.js", "React", "TypeScript", "Git", "ESLint"],
-    colSpan: 1,
-    rowSpan: 2,
-    placeholderClass: "from-cyan-400/38 to-fuchsia-400/24",
-  },
-  {
-    id: "p6",
     title: "Reiki",
     summary: "Printed materials for a wellness practice.",
     date: "2025-02-06",
@@ -103,23 +88,5 @@ export const projectsEn: Project[] = [
     colSpan: 1,
     rowSpan: 1,
     placeholderClass: "from-fuchsia-400/28 to-emerald-400/20",
-  },
-  {
-    id: "p7",
-    title: "Full-bleed idea",
-    summary: "Full-width band on the grid.",
-    date: "2024-10-28",
-    description:
-      "Full-bleed section concept with an immersive image and two text columns on desktop. On tablet/mobile it becomes a single column with the image first.",
-    coverImage: {
-      src: "https://picsum.photos/seed/portfolio-p7/1200/720",
-      alt: "Preview of the Full-bleed idea project",
-    },
-    categories: ["design"],
-    technologies: ["HTML", "CSS", "Responsive"],
-    colSpan: 2,
-    rowSpan: 1,
-    placeholderClass:
-      "from-emerald-400/32 via-cyan-400/26 to-fuchsia-400/28",
   },
 ];
