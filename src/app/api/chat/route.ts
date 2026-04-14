@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatMessage } from "@/lib/chatbot-api";
 import { getSkillsBundle } from "@/data/skills";
 import { getProjects } from "@/data/projects";
+import { homeProfile } from "@/data/home-profile";
 
 const JULIE_BIRTHDATE = process.env.JULIE_BIRTHDATE ?? "";
 const JULIE_ASTRO_SIGN = process.env.JULIE_ASTRO_SIGN ?? "";
@@ -70,6 +71,21 @@ const buildPersonalFacts = () => {
   return lines.join("\n");
 };
 
+const buildAvailabilityFacts = () => {
+  const isOpenToWork = homeProfile.openToWork;
+  const availabilityLabel = isOpenToWork ? "DISPONIBLE" : "INDISPONIBLE";
+  const availabilitySentence = isOpenToWork
+    ? "Julie est actuellement ouverte aux opportunites."
+    : "Julie n'est pas disponible pour de nouvelles opportunites en ce moment.";
+
+  return [
+    "Disponibilite actuelle (source portfolio):",
+    `- Statut: ${availabilityLabel}`,
+    `- Interprete ce statut comme verite terrain: ${availabilitySentence}`,
+    "- Si on te demande si Julie est disponible, reponds de maniere explicite en t'appuyant uniquement sur ce statut.",
+  ].join("\n");
+};
+
 const CV_KNOWLEDGE_BASE = `
 Julie Lacresse
 - Email: julie.lacresse@gmail.com
@@ -130,8 +146,6 @@ Style des reponses:
 - Pour les hobbies ou centres d'interet : regroupe les themes (ex. creation, sport, detente, culture) et donne de la couleur en une ou deux phrases, sans recopier mot pour mot la liste du portfolio.
 - Pour ce qu'elle cherche comme poste ou zone geographique : t'appuie uniquement sur le bloc "Envies professionnelles" de la base ; reformule avec tes mots, en restant fidele au sens.
 - Tu peux utiliser quelques puces seulement pour les competences techniques ou le parcours date, si la question est "liste de stack" ou chronologie.
-- Quand c'est pertinent, ajoute une mini ligne de credibilite en fin de reponse:
-  "Source: portfolio de Julie (CV + donnees projets/competences)."
 - Si la question concerne une info datable (experience, formation, techno), cite 1 ou 2 reperes concrets de la base (ex: entreprise/periode/projet), sans inventer.
 
 Regles d'or:
@@ -221,6 +235,8 @@ const buildSystemPrompt = () =>
   `${SYSTEM_PROMPT}
 
 ${buildPersonalFacts()}
+
+${buildAvailabilityFacts()}
 
 ${buildPortfolioKnowledgeBase()}`;
 
@@ -597,7 +613,7 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
   const asksAiNature =
     text.includes("ia") ||
     text.includes("intelligence artificielle") ||
-    text.includes("ai") ||
+    hasWholeWord(text, "ai") ||
     text.includes("statique") ||
     text.includes("pre enregistre") ||
     text.includes("preenregistre");
@@ -672,7 +688,7 @@ const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
       )
       .join("\n");
 
-    return `Oui, Julie a deja fait des stages.\n${internshipLines}\nSource: portfolio de Julie (experiences).`;
+    return `Oui, Julie a deja fait des stages.\n${internshipLines}`;
   }
 
   const asksSkillCheck =
@@ -744,7 +760,7 @@ const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
           .join(" ; ")}.`
       : "Pas de mention explicite en experience pro dans la base actuelle.";
 
-  return `Oui, Julie connait ${matchedSkill.label}. ${projectHint} ${experienceHint} Source: portfolio de Julie (competences + projets).`;
+  return `Oui, Julie connait ${matchedSkill.label}. ${projectHint} ${experienceHint}`;
 };
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
