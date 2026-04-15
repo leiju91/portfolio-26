@@ -15,7 +15,7 @@ export default function HomePage() {
   return (
     <main
       id="main-content"
-      className="flex flex-1 flex-col px-6 pb-10 pt-28"
+      className="flex flex-1 flex-col overflow-y-clip px-6 pb-2 pt-20 sm:pb-10 sm:pt-28"
       tabIndex={-1}
     >
       <div className="flex flex-1 flex-col items-center justify-center">

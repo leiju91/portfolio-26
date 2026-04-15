@@ -3,6 +3,7 @@
 import {
   type CSSProperties,
   FormEvent,
+  Fragment,
   useCallback,
   useEffect,
   useMemo,
@@ -43,6 +44,7 @@ const createMessage = (
 const CHATBOT_NUDGE_DELAY_MS = 3 * 60 * 1000;
 const CHATBOT_NUDGE_STORAGE_KEY = "portfolio-chatbot-nudge-seen";
 const CHATBOT_EMAIL_HINT_EVENT = "chatbot:highlight-email";
+const URL_TOKEN_REGEX = /(https?:\/\/[^\s]+)/gi;
 
 const fabBubbles: {
   drift: string;
@@ -54,6 +56,52 @@ const fabBubbles: {
   { drift: "8px", delay: "0.9s" },
   { drift: "16px", delay: "1.35s" },
 ];
+
+const splitTrailingPunctuation = (token: string) => {
+  const match = token.match(/[),.!?:;]+$/);
+  if (!match) {
+    return { cleanToken: token, trailing: "" };
+  }
+  const trailing = match[0];
+  return {
+    cleanToken: token.slice(0, -trailing.length),
+    trailing,
+  };
+};
+
+const renderMessageContent = (content: string) => {
+  const lines = content.split("\n");
+
+  return lines.map((line, lineIndex) => {
+    const parts = line.split(URL_TOKEN_REGEX);
+    return (
+      <Fragment key={`line-${lineIndex}`}>
+        {parts.map((part, partIndex) => {
+          if (!part) return null;
+          if (!/^https?:\/\//i.test(part)) {
+            return <span key={`txt-${lineIndex}-${partIndex}`}>{part}</span>;
+          }
+
+          const { cleanToken, trailing } = splitTrailingPunctuation(part);
+          return (
+            <Fragment key={`url-${lineIndex}-${partIndex}`}>
+              <a
+                href={cleanToken}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-emerald-300/70 underline-offset-2 hover:text-emerald-200"
+              >
+                {cleanToken}
+              </a>
+              {trailing && <span>{trailing}</span>}
+            </Fragment>
+          );
+        })}
+        {lineIndex < lines.length - 1 && <br />}
+      </Fragment>
+    );
+  });
+};
 
 export default function FloatingChatbot({
   streamProvider = defaultStreamChatProvider,
@@ -246,7 +294,7 @@ export default function FloatingChatbot({
             </button>
           </header>
 
-          <div className="max-h-88 space-y-3 overflow-y-auto px-4 py-4">
+          <div className="chatbot-scrollbar max-h-88 space-y-3 overflow-y-auto px-4 py-4">
             {messages.map((message) => (
               <article
                 key={message.id}
@@ -257,7 +305,7 @@ export default function FloatingChatbot({
                     : "ml-auto bg-linear-to-r from-emerald-400/90 via-cyan-400/85 to-fuchsia-400/75 font-medium text-primary-foreground shadow-sm"
                 )}
               >
-                {message.content}
+                {renderMessageContent(message.content)}
               </article>
             ))}
             {showThinking && (

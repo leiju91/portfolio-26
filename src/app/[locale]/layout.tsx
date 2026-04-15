@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 
 import Footer from "@/components/Footer";
 import { FixedLocaleSwitcher } from "@/components/FixedLocaleSwitcher";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import Navbar from "@/components/Navbar";
 import { CustomCursor } from "@/components/CustomCursor";
 import FloatingChatbot from "@/components/chatbot/FloatingChatbot";
@@ -110,6 +111,9 @@ export default async function LocaleLayout({ children, params }: Props) {
           <FixedLocaleSwitcher />
           <Navbar />
           <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          <div className="flex justify-center px-6 pb-6 sm:hidden">
+            <LocaleSwitcher />
+          </div>
           <Footer />
           <FloatingChatbot />
         </NextIntlClientProvider>

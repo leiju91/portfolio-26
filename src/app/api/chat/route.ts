@@ -3,10 +3,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatMessage } from "@/lib/chatbot-api";
 import { getSkillsBundle } from "@/data/skills";
 import { getProjects } from "@/data/projects";
+import { homeProfile } from "@/data/home-profile";
 
 const JULIE_BIRTHDATE = process.env.JULIE_BIRTHDATE ?? "";
 const JULIE_ASTRO_SIGN = process.env.JULIE_ASTRO_SIGN ?? "";
 const JULIE_ASCENDANT = process.env.JULIE_ASCENDANT ?? "";
+const JULIE_LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "";
 
 const computeAge = (birthdateIso: string, now = new Date()): number | null => {
   if (!birthdateIso) return null;
@@ -70,6 +72,21 @@ const buildPersonalFacts = () => {
   return lines.join("\n");
 };
 
+const buildAvailabilityFacts = () => {
+  const isOpenToWork = homeProfile.openToWork;
+  const availabilityLabel = isOpenToWork ? "DISPONIBLE" : "INDISPONIBLE";
+  const availabilitySentence = isOpenToWork
+    ? "Julie est actuellement ouverte aux opportunites."
+    : "Julie n'est pas disponible pour de nouvelles opportunites en ce moment.";
+
+  return [
+    "Disponibilite actuelle (source portfolio):",
+    `- Statut: ${availabilityLabel}`,
+    `- Interprete ce statut comme verite terrain: ${availabilitySentence}`,
+    "- Si on te demande si Julie est disponible, reponds de maniere explicite en t'appuyant uniquement sur ce statut.",
+  ].join("\n");
+};
+
 const CV_KNOWLEDGE_BASE = `
 Julie Lacresse
 - Email: julie.lacresse@gmail.com
@@ -130,8 +147,6 @@ Style des reponses:
 - Pour les hobbies ou centres d'interet : regroupe les themes (ex. creation, sport, detente, culture) et donne de la couleur en une ou deux phrases, sans recopier mot pour mot la liste du portfolio.
 - Pour ce qu'elle cherche comme poste ou zone geographique : t'appuie uniquement sur le bloc "Envies professionnelles" de la base ; reformule avec tes mots, en restant fidele au sens.
 - Tu peux utiliser quelques puces seulement pour les competences techniques ou le parcours date, si la question est "liste de stack" ou chronologie.
-- Quand c'est pertinent, ajoute une mini ligne de credibilite en fin de reponse:
-  "Source: portfolio de Julie (CV + donnees projets/competences)."
 - Si la question concerne une info datable (experience, formation, techno), cite 1 ou 2 reperes concrets de la base (ex: entreprise/periode/projet), sans inventer.
 
 Regles d'or:
@@ -221,6 +236,8 @@ const buildSystemPrompt = () =>
   `${SYSTEM_PROMPT}
 
 ${buildPersonalFacts()}
+
+${buildAvailabilityFacts()}
 
 ${buildPortfolioKnowledgeBase()}`;
 
@@ -578,6 +595,8 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
   if (!latestUserMessage?.content) return null;
 
   const text = normalizeText(latestUserMessage.content);
+  const skills = getSkillsBundle("fr");
+  const preferredLocation = skills.chatbotCareerContext.whereSheWantsToWork;
 
   const asksIdentity =
     text.includes("qui es tu") ||
@@ -594,10 +613,18 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
     return "Pour contacter Julie: julie.lacresse@gmail.com 📩";
   }
 
+  const asksLinkedin = text.includes("linkedin") || text.includes("linked in");
+  if (asksLinkedin) {
+    if (JULIE_LINKEDIN_URL) {
+      return `Voici le LinkedIn de Julie: ${JULIE_LINKEDIN_URL}`;
+    }
+    return "Je n'ai pas encore le lien LinkedIn dans mes donnees. Tu peux contacter Julie ici: julie.lacresse@gmail.com 📩";
+  }
+
   const asksAiNature =
     text.includes("ia") ||
     text.includes("intelligence artificielle") ||
-    text.includes("ai") ||
+    hasWholeWord(text, "ai") ||
     text.includes("statique") ||
     text.includes("pre enregistre") ||
     text.includes("preenregistre");
@@ -609,6 +636,25 @@ const buildDirectKnowledgeAnswer = (messages: ChatMessage[]): string | null => {
     text.includes("ou habite") || text.includes("localisation") || text.includes("ou est basee");
   if (asksLocation) {
     return "Julie est basee a Hagondange (57300), France 🌍";
+  }
+
+  const asksPreferredLocation =
+    text.includes("localisation pref") ||
+    text.includes("prefere travailler") ||
+    text.includes("ou veut travailler") ||
+    text.includes("zone geographique") ||
+    text.includes("ou cherche");
+  if (asksPreferredLocation) {
+    return `Pour la localisation, Julie privilegie: ${preferredLocation}`;
+  }
+
+  const asksCommute =
+    text.includes("trajet") ||
+    text.includes("transport") ||
+    text.includes("deplacement") ||
+    text.includes("commute");
+  if (asksCommute) {
+    return `Cote trajet, Julie est basee a Hagondange et reste ouverte aux opportunites au Luxembourg, en Grande Region (frontalier depuis la Lorraine), ou en teletravail/hybride selon le rythme d'equipe.`;
   }
 
   return null;
@@ -649,6 +695,26 @@ const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
   const text = normalizeText(rawText);
   const skills = getSkillsBundle("fr");
   const projects = getProjects("fr");
+  const uniqueProjectTechnologies = unique(projects.flatMap((project) => project.technologies));
+  const allKnownSkills = unique(
+    [
+      ...skills.workExperience.flatMap((entry) => entry.skills),
+      ...skills.education.flatMap((entry) => entry.skills),
+      ...uniqueProjectTechnologies,
+    ].map((item) => item.trim())
+  );
+  const knownSkillWithNormalized = allKnownSkills
+    .map((label) => ({ label, normalized: normalizeText(label) }))
+    .sort((a, b) => b.normalized.length - a.normalized.length);
+
+  const asksGeneralStack =
+    text.includes("technolog") ||
+    text.includes("techno") ||
+    text.includes("stack") ||
+    text.includes("competenc") ||
+    text.includes("skill") ||
+    text.includes("outils") ||
+    text.includes("langages");
 
   const asksInternships =
     text.includes("stage") ||
@@ -672,7 +738,7 @@ const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
       )
       .join("\n");
 
-    return `Oui, Julie a deja fait des stages.\n${internshipLines}\nSource: portfolio de Julie (experiences).`;
+    return `Oui, Julie a deja fait des stages.\n${internshipLines}`;
   }
 
   const asksSkillCheck =
@@ -685,26 +751,44 @@ const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
     text.includes("knows") ||
     text.includes("experienced with");
 
-  if (!asksSkillCheck) return null;
+  if (!asksSkillCheck && !asksGeneralStack) return null;
 
-  const allKnownSkills = unique(
-    [
-      ...skills.workExperience.flatMap((entry) => entry.skills),
-      ...skills.education.flatMap((entry) => entry.skills),
-      ...projects.flatMap((project) => project.technologies),
-    ].map((item) => item.trim())
+  const topProjectTechs = uniqueProjectTechnologies.slice(0, 8);
+  const coreWebTechs = allKnownSkills.filter((skill) =>
+    ["html", "css", "javascript", "typescript", "react", "next", "tailwind", "php", "sql"].some(
+      (keyword) => normalizeText(skill).includes(keyword)
+    )
+  );
+  const cmsTechs = allKnownSkills.filter((skill) =>
+    ["drupal", "wordpress", "shopify", "cms"].some((keyword) =>
+      normalizeText(skill).includes(keyword)
+    )
   );
 
-  const knownSkillWithNormalized = allKnownSkills
-    .map((label) => ({ label, normalized: normalizeText(label) }))
-    .sort((a, b) => b.normalized.length - a.normalized.length);
+  const buildGeneralStackAnswer = () => {
+    const webStack = unique(coreWebTechs).slice(0, 6);
+    const cmsStack = unique(cmsTechs).slice(0, 3);
+    const projectStack = unique(topProjectTechs).slice(0, 6);
+
+    return [
+      "Julie travaille surtout sur une stack front-end moderne.",
+      webStack.length > 0 ? `Web: ${webStack.join(", ")}.` : "",
+      cmsStack.length > 0 ? `CMS: ${cmsStack.join(", ")}.` : "",
+      projectStack.length > 0 ? `Techs presentes sur ses projets: ${projectStack.join(", ")}.` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+  };
 
   const matchedSkill = knownSkillWithNormalized.find(
     (skill) => skill.normalized.length >= 2 && text.includes(skill.normalized)
   );
 
   if (!matchedSkill) {
-    const strongerSkills = unique(projects.flatMap((project) => project.technologies)).slice(0, 6);
+    if (asksGeneralStack) {
+      return buildGeneralStackAnswer();
+    }
+    const strongerSkills = topProjectTechs.slice(0, 6);
     return `Je n'ai pas trouve cette techno exactement dans mes donnees. En revanche, Julie travaille notamment avec: ${strongerSkills.join(", ")}.`;
   }
 
@@ -744,7 +828,7 @@ const buildExperienceAwareAnswer = (messages: ChatMessage[]): string | null => {
           .join(" ; ")}.`
       : "Pas de mention explicite en experience pro dans la base actuelle.";
 
-  return `Oui, Julie connait ${matchedSkill.label}. ${projectHint} ${experienceHint} Source: portfolio de Julie (competences + projets).`;
+  return `Oui, Julie connait ${matchedSkill.label}. ${projectHint} ${experienceHint}`;
 };
 
 const RATE_LIMIT_MAX_REQUESTS = 5;

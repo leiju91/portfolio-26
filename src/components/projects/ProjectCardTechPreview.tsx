@@ -26,7 +26,7 @@ export function ProjectCardTechPreview({
         <ProjectTechChip key={`${tech}-${index}`} label={tech} size="sm" />
       ))}
       {extra > 0 ? (
-        <span className="px-0.5 text-[0.6rem] font-medium tabular-nums text-white/45">
+        <span className="px-0.5 text-[0.67rem] font-medium tabular-nums text-white/50 sm:text-[0.6rem] sm:text-white/45">
           +{extra}
         </span>
       ) : null}

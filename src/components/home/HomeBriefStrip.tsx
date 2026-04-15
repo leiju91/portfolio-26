@@ -51,7 +51,7 @@ export function HomeBriefStrip({
 
   return (
     <motion.section
-      className="mt-24 flex w-full min-w-0 flex-col items-center sm:mt-32"
+      className="mt-10 flex w-full min-w-0 flex-col items-center sm:mt-32"
       initial={{ opacity: 0, y: 16 }}
       animate={hydrated ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.45, delay: 0.3, ease: easeOut }}

@@ -44,7 +44,7 @@ export function HomeProfileBadge({
 
   return (
     <motion.div
-      className="mt-16 flex w-full flex-col items-center sm:mt-24"
+      className="mt-8 flex w-full flex-col items-center sm:mt-24"
       initial={off}
       animate={hydrated ? on : off}
       transition={{ duration: 0.55, delay: 0.06, ease: easeOut }}
