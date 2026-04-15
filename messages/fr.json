@@ -100,9 +100,9 @@
   },
   "chatbot": {
     "otterAlt": "Loutre assistante souriante tenant un saumon, mascotte du chatbot",
-    "suggested1": "Quels sont tes projets ?",
-    "suggested2": "Comment te contacter ?",
-    "suggested3": "Quelles technologies maîtrises-tu ?",
+    "suggested1": "Peux-tu resumer le profil de Julie ?",
+    "suggested2": "Quel est le lien LinkedIn de Julie ?",
+    "suggested3": "Quelles technologies utilise Julie ?",
     "welcome": "Salut, je suis le compagnon de Julie, une loutre assistante. Pose-moi une question sur son portfolio.",
     "title": "Le compagnon de Julie",
     "subtitle": "Assistant loutre",

@@ -100,9 +100,9 @@
   },
   "chatbot": {
     "otterAlt": "Smiling otter assistant holding a salmon, chatbot mascot",
-    "suggested1": "What projects have you worked on?",
-    "suggested2": "How can I contact you?",
-    "suggested3": "What technologies do you use?",
+    "suggested1": "Can you summarize Julie's profile?",
+    "suggested2": "What is Julie's LinkedIn link?",
+    "suggested3": "What technologies does Julie use?",
     "welcome": "Hi! I’m Julie’s companion, an otter assistant. Ask me anything about her portfolio.",
     "title": "Julie’s companion",
     "subtitle": "Otter assistant",

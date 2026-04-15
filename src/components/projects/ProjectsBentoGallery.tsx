@@ -55,14 +55,12 @@ type BentoCardProps = {
   project: Project;
   onOpenProject: (project: Project) => void;
   openProjectLabel: (title: string) => string;
-  placeholderLabel: string;
 };
 
 function BentoCard({
   project,
   onOpenProject,
   openProjectLabel,
-  placeholderLabel,
 }: BentoCardProps) {
   const reduceMotion = useReducedMotion();
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
@@ -103,6 +101,7 @@ function BentoCard({
       style={reduceMotion ? undefined : { transformPerspective: 900 }}
       className={cn(
         "group relative flex w-full max-w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-background/72 text-left shadow-lg backdrop-blur-xl outline-none",
+        "min-h-96 sm:min-h-0",
         "focus-visible:ring-2 focus-visible:ring-emerald-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       )}
     >
@@ -113,8 +112,8 @@ function BentoCard({
         )}
         aria-hidden
       />
-      <div className="relative flex min-h-0 flex-1 flex-col p-2.5 sm:p-3.5 lg:p-4">
-        <div className="mx-auto mb-2 aspect-square w-full max-w-60 shrink-0 sm:mb-2.5 sm:max-w-64 md:max-w-72 lg:max-w-80">
+      <div className="relative flex min-h-0 flex-1 flex-col p-3 sm:p-3.5 lg:p-4">
+        <div className="mx-auto mb-2.5 aspect-square w-full max-w-64 shrink-0 sm:mb-2.5 sm:max-w-64 md:max-w-72 lg:max-w-80">
           <motion.div
             layoutId={getProjectMediaLayoutId(project.id)}
             className="relative h-full w-full overflow-hidden rounded-xl border border-white/20 bg-white/8"
@@ -133,9 +132,6 @@ function BentoCard({
               )}
               aria-hidden
             />
-            <span className="absolute right-2 bottom-2 rounded-full border border-white/20 bg-black/40 px-2 py-1 text-[0.6rem] font-medium uppercase tracking-widest text-white/75 backdrop-blur-sm sm:text-[0.65rem]">
-              {placeholderLabel}
-            </span>
           </motion.div>
         </div>
         <header className="mt-auto shrink-0 space-y-0.5">
@@ -411,7 +407,6 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
                       project={activeProject}
                       onOpenProject={setDialogProject}
                       openProjectLabel={openProjectLabel}
-                      placeholderLabel={tGallery("placeholder")}
                     />
                   </motion.div>
                 ) : null}
