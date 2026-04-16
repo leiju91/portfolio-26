@@ -1,21 +1,22 @@
-/**
- * Profile shown on the home page (badge under the title).
- * Edit these values here — no .env required.
- */
-function parseOpenToWork(rawValue: string | undefined): boolean {
-  if (!rawValue) {
-    return true;
+export type AvailabilityStatus = "available" | "unavailable" | "training";
+
+function parseAvailabilityStatus(rawValue: string | undefined): AvailabilityStatus {
+  const normalized = rawValue?.trim().toLowerCase();
+  if (!normalized) {
+    return "available";
   }
 
-  const normalized = rawValue.trim().toLowerCase();
-  if (["false", "0", "off", "no"].includes(normalized)) {
-    return false;
+  if (["available", "open", "true", "1", "on", "yes"].includes(normalized)) {
+    return "available";
   }
-  if (["true", "1", "on", "yes"].includes(normalized)) {
-    return true;
+  if (["unavailable", "closed", "false", "0", "off", "no"].includes(normalized)) {
+    return "unavailable";
+  }
+  if (["training", "formation", "learning", "in-training"].includes(normalized)) {
+    return "training";
   }
 
-  return true;
+  return "available";
 }
 
 export const homeProfile = {
@@ -23,9 +24,14 @@ export const homeProfile = {
   avatarSrc: "/avatar.webp" as string | null,
   name: "Julie Lacresse",
   /**
-   * Drives the navbar availability badge and the avatar status dot (green vs red).
-   * Controlled by NEXT_PUBLIC_OPEN_TO_WORK (`true` / `false`) in `.env.local`.
-   * Defaults to `true` if unset or invalid.
+   * Controls availability UI state.
+   * Use NEXT_PUBLIC_AVAILABILITY_STATUS in `.env.local`:
+   * - available | unavailable | training
+   *
+   * Backward-compatible with NEXT_PUBLIC_OPEN_TO_WORK (true/false).
+   * Defaults to `available`.
    */
-  openToWork: parseOpenToWork(process.env.NEXT_PUBLIC_OPEN_TO_WORK),
+  availabilityStatus: parseAvailabilityStatus(
+    process.env.NEXT_PUBLIC_AVAILABILITY_STATUS ?? process.env.NEXT_PUBLIC_OPEN_TO_WORK
+  ) as AvailabilityStatus,
 };

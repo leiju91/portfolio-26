@@ -121,7 +121,7 @@ export default function Navbar() {
                 </AvatarFallback>
               </Avatar>
 
-              <AvailabilityBadge available={homeProfile.openToWork} />
+              <AvailabilityBadge status={homeProfile.availabilityStatus} />
             </div>
 
             <div className="hidden items-center gap-1 sm:flex">

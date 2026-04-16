@@ -73,11 +73,19 @@ const buildPersonalFacts = () => {
 };
 
 const buildAvailabilityFacts = () => {
-  const isOpenToWork = homeProfile.openToWork;
-  const availabilityLabel = isOpenToWork ? "DISPONIBLE" : "INDISPONIBLE";
-  const availabilitySentence = isOpenToWork
-    ? "Julie est actuellement ouverte aux opportunites."
-    : "Julie n'est pas disponible pour de nouvelles opportunites en ce moment.";
+  const status = homeProfile.availabilityStatus;
+  const availabilityLabel =
+    status === "available"
+      ? "DISPONIBLE"
+      : status === "training"
+        ? "EN FORMATION"
+        : "INDISPONIBLE";
+  const availabilitySentence =
+    status === "available"
+      ? "Julie est actuellement ouverte aux opportunites."
+      : status === "training"
+        ? "Julie est actuellement en formation; elle peut etre selective selon les opportunites."
+        : "Julie n'est pas disponible pour de nouvelles opportunites en ce moment.";
 
   return [
     "Disponibilite actuelle (source portfolio):",

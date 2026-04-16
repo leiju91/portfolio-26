@@ -33,18 +33,25 @@
     "brief2": "Moselle, France & Luxembourg · remote / hybrid",
     "brief3": "Drupal, WP, React",
     "brief4": "Availability: TBD",
+    "brief4In": "Availability: in {countdown}",
+    "brief4OnDate": "Availability: now",
+    "countdownJoin": "and",
     "viewProjects": "View projects",
     "profilePhotoAlt": "{name} profile photo"
   },
   "availability": {
     "open": "Available",
     "closed": "Unavailable",
+    "training": "In training",
     "openLong": "Open to opportunities",
     "closedLong": "Not available right now",
+    "trainingLong": "In training",
     "dotOpenTitle": "Available for work",
     "dotClosedTitle": "Not available for work",
+    "dotTrainingTitle": "In training",
     "dotOpenAria": "Available for work",
-    "dotClosedAria": "Not available for work"
+    "dotClosedAria": "Not available for work",
+    "dotTrainingAria": "In training"
   },
   "projectsPage": {
     "title": "Projects",
