@@ -34,25 +34,18 @@ export function FooterSpotifyPopover() {
       >
         <FooterSpotifyMusicIcon />
       </Dialog.Trigger>
-      <Dialog.Portal>
-        {open ? (
-          <button
-            type="button"
-            className={cn(
-              "fixed inset-0 z-90 cursor-default border-0 bg-black/25 backdrop-blur-[1px]",
-              "animate-in fade-in-0 duration-150 focus:outline-none"
-            )}
-            aria-label={t("closeOverlay")}
-            onClick={() => setOpen(false)}
-          />
-        ) : null}
+      <Dialog.Portal forceMount>
         <Dialog.Content
+          forceMount
           onOpenAutoFocus={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
           className={cn(
             "fixed z-100 w-[min(22rem,calc(100vw-1.25rem))] overflow-hidden rounded-2xl border border-white/12 bg-background/98 p-3 shadow-2xl backdrop-blur-xl outline-none",
             "left-auto right-3 top-1/2 max-h-[min(85vh,580px)] -translate-y-1/2 sm:right-5",
             "max-sm:top-auto max-sm:bottom-[calc(env(safe-area-inset-bottom,0px)+4.75rem)] max-sm:max-h-[min(52vh,440px)] max-sm:translate-y-0",
-            "data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-right-2 data-[state=open]:slide-in-from-right-2"
+            "data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
+            "data-[state=closed]:scale-95 data-[state=open]:scale-100",
+            "transition-[opacity,transform] duration-150 ease-out"
           )}
         >
           <Dialog.Title className="sr-only">{t("dialogTitle")}</Dialog.Title>

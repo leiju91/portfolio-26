@@ -33,18 +33,25 @@
     "brief2": "Moselle, France & Luxembourg · télétravail / hybride",
     "brief3": "Drupal, WP, React",
     "brief4": "Disponibilité : à préciser",
+    "brief4In": "Disponibilité : dans {countdown}",
+    "brief4OnDate": "Disponibilité : maintenant",
+    "countdownJoin": "et",
     "viewProjects": "Voir les projets",
     "profilePhotoAlt": "Photo de profil de {name}"
   },
   "availability": {
     "open": "Disponible",
     "closed": "Indisponible",
+    "training": "En formation",
     "openLong": "Ouverte aux opportunités",
     "closedLong": "Pas disponible pour le moment",
+    "trainingLong": "En formation",
     "dotOpenTitle": "Disponible",
     "dotClosedTitle": "Indisponible",
+    "dotTrainingTitle": "En formation",
     "dotOpenAria": "Disponible",
-    "dotClosedAria": "Indisponible"
+    "dotClosedAria": "Indisponible",
+    "dotTrainingAria": "En formation"
   },
   "projectsPage": {
     "title": "Projets",

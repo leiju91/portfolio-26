@@ -34,7 +34,9 @@ export function HomeProfileBadge({
 }: HomeMotionReadyProps): ReactElement {
   const t = useTranslations("home");
   const tAvail = useTranslations("availability");
-  const { avatarSrc, name, openToWork } = homeProfile;
+  const { avatarSrc, name, availabilityStatus } = homeProfile;
+  const isAvailable = availabilityStatus === "available";
+  const isTraining = availabilityStatus === "training";
   const profileInitials = initialsFromName(name);
   const title = t("title");
   const photoAlt = t("profilePhotoAlt", { name });
@@ -77,15 +79,25 @@ export function HomeProfileBadge({
           <span
             className={cn(
               "absolute right-1 bottom-1 z-10 size-4 rounded-full border border-white/20 ring-2 ring-background sm:right-1.5 sm:bottom-1.5 sm:size-5",
-              openToWork
+              isAvailable
                 ? "bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.55)]"
-                : "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.55)]"
+                : isTraining
+                  ? "bg-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.5)]"
+                  : "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.55)]"
             )}
             title={
-              openToWork ? tAvail("dotOpenTitle") : tAvail("dotClosedTitle")
+              isAvailable
+                ? tAvail("dotOpenTitle")
+                : isTraining
+                  ? tAvail("dotTrainingTitle")
+                  : tAvail("dotClosedTitle")
             }
             aria-label={
-              openToWork ? tAvail("dotOpenAria") : tAvail("dotClosedAria")
+              isAvailable
+                ? tAvail("dotOpenAria")
+                : isTraining
+                  ? tAvail("dotTrainingAria")
+                  : tAvail("dotClosedAria")
             }
           />
         </div>

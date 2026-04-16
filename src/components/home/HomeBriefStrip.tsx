@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { Briefcase, MapPin, Monitor, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactElement } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
@@ -44,10 +45,128 @@ const briefLines: BriefLine[] = [
   },
 ];
 
+const MINUTE_IN_MS = 60_000;
+const DAY_IN_MS = 86_400_000;
+
+type DurationParts = {
+  months: number;
+  days: number;
+  hours: number;
+  minutes: number;
+};
+
+function parseAvailabilityDate(rawDate: string | undefined): Date | null {
+  if (!rawDate) {
+    return null;
+  }
+
+  const trimmed = rawDate.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function getDurationParts(from: Date, to: Date): DurationParts {
+  if (to.getTime() <= from.getTime()) {
+    return { months: 0, days: 0, hours: 0, minutes: 0 };
+  }
+
+  const cursor = new Date(from);
+  let months = 0;
+
+  while (true) {
+    const nextMonth = new Date(cursor);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    if (nextMonth.getTime() > to.getTime()) {
+      break;
+    }
+    cursor.setMonth(cursor.getMonth() + 1);
+    months += 1;
+  }
+
+  const remainingMs = to.getTime() - cursor.getTime();
+  const days = Math.floor(remainingMs / DAY_IN_MS);
+  const afterDaysMs = remainingMs - days * DAY_IN_MS;
+  const hours = Math.floor(afterDaysMs / 3_600_000);
+  const afterHoursMs = afterDaysMs - hours * 3_600_000;
+  const minutes = Math.floor(afterHoursMs / MINUTE_IN_MS);
+
+  return { months, days, hours, minutes };
+}
+
+function formatDuration(locale: string, parts: DurationParts, joinWord: string): string {
+  const formatUnit = (value: number, unit: "month" | "day" | "hour" | "minute") =>
+    new Intl.NumberFormat(locale, {
+      style: "unit",
+      unit,
+      unitDisplay: "long",
+    }).format(value);
+
+  const chunks: string[] = [];
+
+  if (parts.months > 0) {
+    chunks.push(formatUnit(parts.months, "month"));
+  }
+  if (parts.days > 0) {
+    chunks.push(formatUnit(parts.days, "day"));
+  }
+  if (parts.hours > 0) {
+    chunks.push(formatUnit(parts.hours, "hour"));
+  }
+  if (parts.minutes > 0) {
+    chunks.push(formatUnit(parts.minutes, "minute"));
+  }
+
+  const compact = chunks.slice(0, 2);
+  if (compact.length === 0) {
+    return formatUnit(0, "minute");
+  }
+  if (compact.length === 1) {
+    return compact[0];
+  }
+
+  return `${compact[0]} ${joinWord} ${compact[1]}`;
+}
+
 export function HomeBriefStrip({
   hydrated,
 }: HomeMotionReadyProps): ReactElement {
   const t = useTranslations("home");
+  const locale = useLocale();
+  const [now, setNow] = useState(() => new Date());
+  const availableFrom = useMemo(
+    () => parseAvailabilityDate(process.env.NEXT_PUBLIC_AVAILABLE_FROM),
+    []
+  );
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setNow(new Date());
+    }, MINUTE_IN_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const availabilityText = useMemo(() => {
+    if (!availableFrom) {
+      return t("brief4");
+    }
+
+    if (availableFrom.getTime() <= now.getTime()) {
+      return t("brief4OnDate");
+    }
+
+    const duration = getDurationParts(now, availableFrom);
+    const countdown = formatDuration(locale, duration, t("countdownJoin"));
+    return t("brief4In", { countdown });
+  }, [availableFrom, locale, now, t]);
 
   return (
     <motion.section
@@ -68,7 +187,7 @@ export function HomeBriefStrip({
                 className={cn("mt-0.5 size-4 shrink-0", iconColor)}
                 aria-hidden
               />
-              <span>{t(messageKey)}</span>
+              <span>{messageKey === "brief4" ? availabilityText : t(messageKey)}</span>
             </li>
           ))}
         </ul>
@@ -91,7 +210,9 @@ export function HomeBriefStrip({
                   className={cn(iconClassSm, iconColor)}
                   aria-hidden
                 />
-                <span className="whitespace-nowrap">{t(messageKey)}</span>
+                <span className="whitespace-nowrap">
+                  {messageKey === "brief4" ? availabilityText : t(messageKey)}
+                </span>
               </span>
               {i < briefLines.length - 1 ? (
                 <span className="shrink-0 text-white/20" aria-hidden>
