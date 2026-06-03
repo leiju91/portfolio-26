@@ -26,7 +26,7 @@
     "builtWith": "Réalisé avec Next.js"
   },
   "home": {
-    "title": "Développeuse web créative | Design & code 💻🎨",
+    "title": "Développeuse Front-End Créative | React · Design UI",
     "briefAria": "En bref",
     "briefHeading": "En bref",
     "brief1": "Dev front / créatif",
@@ -73,6 +73,10 @@
   },
   "projectDetail": {
     "close": "Fermer",
+    "previousImage": "Image précédente",
+    "nextImage": "Image suivante",
+    "showImage": "Afficher l’image {index}",
+    "imagePosition": "Image {current} sur {total}",
     "stack": "Stack",
     "stackAria": "Technologies utilisées sur ce projet"
   },

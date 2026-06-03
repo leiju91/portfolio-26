@@ -110,7 +110,7 @@ Formations
 - Formation Developpeur Web, 490 hours (NumericAll, fev-mai 2020, Esch-sur-Alzette)
 
 Experiences professionnelles
-- NVISION (CDI), Digital Coach, Luxembourg, juin 2021 a aujourd'hui
+- NVISION (CDI), Digital Coach, Luxembourg, juin 2021 a mai 2026
   - Developpement web, assistance client, creation et gestion de newsletters
 - Banque Internationale a Luxembourg (Stage), Web Developer, sept 2020 - fev 2021
   - Modules web: PHP, SQL, CSS, HTML, JS, Ajax

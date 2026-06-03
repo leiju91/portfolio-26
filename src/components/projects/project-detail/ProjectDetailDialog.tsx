@@ -39,8 +39,8 @@ export function ProjectDetailDialog({
           />
           <Dialog.Content
             className={cn(
-              "fixed top-1/2 left-1/2 z-50 max-h-[min(92vh,900px)] w-[min(calc(100vw-1.5rem),52rem)] -translate-x-1/2 -translate-y-1/2",
-              "rounded-2xl border-0 bg-transparent p-0 shadow-none outline-none",
+              "fixed top-1/2 left-1/2 z-50 max-h-[min(94vh,980px)] w-[min(calc(100vw-1.5rem),68rem)] -translate-x-1/2 -translate-y-1/2",
+              "overflow-hidden rounded-2xl border-0 bg-transparent p-0 shadow-none outline-none",
               "data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
             )}
           >
