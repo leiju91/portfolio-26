@@ -64,6 +64,9 @@ function BentoCard({
 }: BentoCardProps) {
   const reduceMotion = useReducedMotion();
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
+  const isPortrait =
+    project.coverImage.height > project.coverImage.width;
+  const mediaAspectRatio = `${project.coverImage.width} / ${project.coverImage.height}`;
 
   const onMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
     if (reduceMotion) return;
@@ -101,7 +104,7 @@ function BentoCard({
       style={reduceMotion ? undefined : { transformPerspective: 900 }}
       className={cn(
         "group relative flex w-full max-w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-background/72 text-left shadow-lg backdrop-blur-xl outline-none",
-        "min-h-96 sm:min-h-0",
+        "min-h-[22rem] sm:min-h-0",
         "focus-visible:ring-2 focus-visible:ring-emerald-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       )}
     >
@@ -112,18 +115,30 @@ function BentoCard({
         )}
         aria-hidden
       />
-      <div className="relative flex min-h-0 flex-1 flex-col p-3 sm:p-3.5 lg:p-4">
-        <div className="mx-auto mb-2.5 aspect-square w-full max-w-64 shrink-0 sm:mb-2.5 sm:max-w-64 md:max-w-72 lg:max-w-80">
+      <div className="relative flex min-h-0 flex-1 flex-col p-3 sm:p-3 lg:p-3.5">
+        <div
+          className={cn(
+            "mx-auto mb-3 w-full shrink-0",
+            isPortrait
+              ? "max-w-64 sm:max-w-72 lg:max-w-80"
+              : "max-w-full"
+          )}
+        >
           <motion.div
             layoutId={getProjectMediaLayoutId(project.id)}
             className="relative h-full w-full overflow-hidden rounded-xl border border-white/20 bg-white/8"
+            style={{ aspectRatio: mediaAspectRatio }}
           >
             <Image
               src={project.coverImage.src}
               alt={project.coverImage.alt}
               fill
-              sizes="(min-width: 1024px) 360px, (min-width: 768px) 320px, 70vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              sizes={
+                isPortrait
+                  ? "(min-width: 1024px) 320px, (min-width: 640px) 288px, 75vw"
+                  : "(min-width: 1280px) 640px, (min-width: 1024px) 576px, (min-width: 640px) 512px, 90vw"
+              }
+              className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
             <div
               className={cn(
@@ -134,7 +149,7 @@ function BentoCard({
             />
           </motion.div>
         </div>
-        <header className="mt-auto shrink-0 space-y-0.5">
+        <header className="shrink-0 space-y-0.5">
           <span className="block text-sm font-semibold tracking-tight text-white/95 sm:text-[0.9375rem]">
             {project.title}
           </span>
@@ -206,10 +221,9 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
   }, [dialogProject]);
 
   useEffect(() => {
-    setActiveIndex(0);
     wheelAccRef.current = 0;
     wheelSignRef.current = 0;
-  }, [activeCategory, filterKey]);
+  }, [filterKey]);
 
   const goToSlide = useCallback((index: number) => {
     const list = filteredRef.current;
@@ -217,9 +231,6 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
     const i = Math.min(Math.max(0, index), list.length - 1);
     setActiveIndex(i);
   }, []);
-
-  const goToSlideRef = useRef(goToSlide);
-  goToSlideRef.current = goToSlide;
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -265,19 +276,19 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
       if (wheelAccRef.current > WHEEL_THRESHOLD) {
         wheelAccRef.current = 0;
         wheelSignRef.current = 0;
-        goToSlideRef.current(idx + 1);
+        goToSlide(idx + 1);
         wheelLockUntilRef.current = now + WHEEL_LOCK_MS;
       } else if (wheelAccRef.current < -WHEEL_THRESHOLD) {
         wheelAccRef.current = 0;
         wheelSignRef.current = 0;
-        goToSlideRef.current(idx - 1);
+        goToSlide(idx - 1);
         wheelLockUntilRef.current = now + WHEEL_LOCK_MS;
       }
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
     return () => window.removeEventListener("wheel", onWheel);
-  }, [reduceMotion]);
+  }, [goToSlide, reduceMotion]);
 
   const onSectionKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (dialogProject !== null) return;
@@ -324,7 +335,7 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
 
   return (
     <LayoutGroup id="projects-gallery">
-      <div className="flex min-h-0 flex-1 flex-col gap-4">
+      <div className="flex min-h-0 w-full flex-1 flex-col justify-center gap-4">
         <ProjectDetailDialog
           project={dialogProject}
           open={dialogOpen}
@@ -350,7 +361,12 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
               variant="navGlass"
               size="sm"
               aria-pressed={pressed}
-              onClick={() => setActiveCategory(id)}
+              onClick={() => {
+                setActiveCategory(id);
+                setActiveIndex(0);
+                wheelAccRef.current = 0;
+                wheelSignRef.current = 0;
+              }}
               className={cn(
                 "h-10 gap-2 rounded-full px-4 text-white/85",
                 pressed &&
@@ -369,11 +385,11 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
           {tGallery("emptyFiltered")}
         </p>
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex flex-col">
           <div
             ref={sectionRef}
             className={cn(
-              "flex min-h-0 flex-1 flex-col touch-pan-x outline-none",
+              "flex flex-col touch-pan-x outline-none",
               "py-1 focus-visible:outline-none sm:py-2",
               "focus-within:ring-2 focus-within:ring-emerald-400/35 focus-within:ring-offset-2 focus-within:ring-offset-background"
             )}
@@ -384,12 +400,12 @@ export function ProjectsBentoGallery({ items }: { items: Project[] }) {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden px-2 py-1 sm:px-4">
+            <div className="flex flex-col items-center overflow-hidden px-2 py-1 sm:px-4">
               <AnimatePresence mode="wait" initial={false}>
                 {activeProject ? (
                   <motion.div
                     key={activeProject.id}
-                    className="w-full max-h-full max-w-lg sm:max-w-xl lg:max-w-2xl xl:max-w-3xl"
+                    className="w-full max-w-lg sm:max-w-xl lg:max-w-2xl xl:max-w-[46rem]"
                     initial={
                       reduceMotion
                         ? { opacity: 0 }

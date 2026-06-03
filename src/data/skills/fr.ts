@@ -4,7 +4,7 @@ export const skillsFr: SkillsBundle = {
   workExperience: [
     {
       id: "we-1",
-      period: "Juin 2021 — aujourd'hui",
+      period: "Juin 2021 — Mai 2026",
       title: "Digital Coach",
       organization: "Nvision",
       location: "Luxembourg",

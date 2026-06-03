@@ -73,6 +73,10 @@
   },
   "projectDetail": {
     "close": "Close",
+    "previousImage": "Previous image",
+    "nextImage": "Next image",
+    "showImage": "Show image {index}",
+    "imagePosition": "Image {current} of {total}",
     "stack": "Stack",
     "stackAria": "Technologies used in this project"
   },

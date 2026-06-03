@@ -16,7 +16,7 @@ export function ProjectDetailLayout({
   return (
     <div
       className={cn(
-        "grid overflow-hidden rounded-2xl border border-white/10 bg-card/30 shadow-2xl md:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] md:min-h-[min(85vh,38rem)]",
+        "grid max-h-[min(94vh,980px)] overflow-hidden rounded-2xl border border-white/10 bg-card/30 shadow-2xl md:h-[min(88vh,42rem)] md:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.9fr)]",
         className
       )}
     >
