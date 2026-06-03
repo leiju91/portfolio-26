@@ -3,6 +3,8 @@ export type ProjectCategory = "code" | "design";
 export type ProjectCoverImage = {
   src: string;
   alt: string;
+  width: number;
+  height: number;
 };
 
 export type Project = {
@@ -12,6 +14,7 @@ export type Project = {
   date: string;
   description: string;
   coverImage: ProjectCoverImage;
+  galleryImages?: ProjectCoverImage[];
   technologies: string[];
   categories: ProjectCategory[];
   colSpan: 1 | 2 | 3 | 4;

@@ -3,18 +3,20 @@ import type { Project } from "./types";
 export const projectsFr: Project[] = [
   {
     id: "p1",
-    title: "idemaquapro",
+    title: "Idemaquapro",
     summary:
       "Site web one page en HTML/CSS avec formulaire de contact.",
     date: "2025-11-01",
     description:
-      "Projet front-end one page pour idemaquapro en HTML/CSS avec integration d'un formulaire de contact. Le but etait de proposer un site clair, rapide et facilement administrable.",
+      "Projet front-end one page pour Idemaquapro en HTML/CSS avec intégration d'un formulaire de contact. Le but était de proposer un site clair, rapide et facilement administrable.",
     coverImage: {
       src: "/projects/code/idemaquapro-website.webp",
-      alt: "Capture du site one page idemaquapro",
+      alt: "Capture du site one page Idemaquapro",
+      width: 1000,
+      height: 750,
     },
     categories: ["code"],
-    technologies: ["HTML", "CSS"],
+    technologies: ["HTML", "CSS", "Tailwind"],
     colSpan: 2,
     rowSpan: 1,
     placeholderClass: "from-cyan-400/35 via-emerald-400/24 to-sky-400/30",
@@ -22,13 +24,15 @@ export const projectsFr: Project[] = [
   {
     id: "p2",
     title: "Movie Explorer (TMDB)",
-    summary: "Application React connectee a The Movie Database API.",
+    summary: "Application React connectée à The Movie Database API.",
     date: "2026-04-14",
     description:
-      "Application React qui interroge l'API The Movie Database pour afficher des films, rechercher des titres et consulter des details. L'interface est construite avec Tailwind CSS et des composants shadcn/ui pour un rendu moderne et coherent.",
+      "Application React qui interroge l'API The Movie Database pour afficher des films, rechercher des titres et consulter des détails. L'interface est construite avec Tailwind CSS et des composants shadcn/ui pour un rendu moderne et cohérent.",
     coverImage: {
       src: "/projects/code/movies.webp",
       alt: "Interface du projet Movie Explorer avec une grille de films",
+      width: 1920,
+      height: 2680,
     },
     categories: ["code"],
     technologies: ["React", "TypeScript", "Tailwind CSS", "shadcn/ui", "TMDB API"],
@@ -39,13 +43,15 @@ export const projectsFr: Project[] = [
   {
     id: "p3",
     title: "Affiche publicitaire Tippex (A3)",
-    summary: "Affiche print A3 concue pour la marque Tippex.",
+    summary: "Affiche print A3 conçue pour la marque Tippex.",
     date: "2016-06-01",
     description:
-      "Conception d'une affiche publicitaire au format A3 pour la marque Tippex. Le visuel met en avant le produit avec une composition claire, une hierarchie typographique forte et un message impactant, tout en respectant les contraintes d'impression et de lisibilite a distance.",
+      "Conception d'une affiche publicitaire au format A3 pour la marque Tippex. Le visuel met en avant le produit avec une composition claire, une hiérarchie typographique forte et un message impactant, tout en respectant les contraintes d'impression et de lisibilité à distance.",
     coverImage: {
       src: "/projects/prints/mariage-tippex.webp",
-      alt: "Affiche publicitaire A3 realisee pour la marque Tippex",
+      alt: "Affiche publicitaire A3 réalisée pour la marque Tippex",
+      width: 2480,
+      height: 3508,
     },
     categories: ["design"],
     technologies: ["Photoshop", "InDesign", "Print design"],
@@ -56,18 +62,126 @@ export const projectsFr: Project[] = [
   {
     id: "p4",
     title: "Reiki",
-    summary: "Supports print pour une activite bien-etre.",
-    date: "2025-02-06",
+    summary: "Supports print pour une activité bien-être.",
+    date: "2019-05-01",
     description:
-      "Realisation de visuels imprimes pour une praticienne Reiki : flyer de presentation, carte de rendez-vous et declinaisons de communication locale. Le travail met l'accent sur une ambiance douce, une lisibilite immediate et des formats prets a l'impression.",
+      "Réalisation de visuels imprimés pour une praticienne Reiki : flyer de présentation, carte de rendez-vous et déclinaisons de communication locale. Le travail met l'accent sur une ambiance douce, une lisibilité immédiate et des formats prêts à l'impression.",
     coverImage: {
       src: "/projects/prints/reiki.webp",
-      alt: "Creation print pour le projet Reiki",
+      alt: "Création print pour le projet Reiki",
+      width: 1748,
+      height: 2480,
     },
     categories: ["design"],
     technologies: ["Photoshop", "InDesign", "Print design"],
     colSpan: 1,
     rowSpan: 1,
     placeholderClass: "from-fuchsia-400/28 to-emerald-400/20",
+  },
+  {
+    id: "p5",
+    title: "Leiju Studio",
+    summary: "Logotype et carte de visite pour ma micro-entreprise.",
+    date: "2020-06-06",
+    description:
+      "Création d'une identité visuelle pour Leiju Studio, micro-entreprise personnelle : conception du logotype et déclinaison sur carte de visite. Le projet met l'accent sur une image sobre, identifiable et facilement exploitable sur supports imprimés.",
+    coverImage: {
+      src: "/projects/prints/leiju-studio-card-1.webp",
+      alt: "Recto de la carte de visite Leiju Studio",
+      width: 1004,
+      height: 650,
+    },
+    galleryImages: [
+      {
+        src: "/projects/prints/leiju-studio-card-2.webp",
+        alt: "Verso de la carte de visite Leiju Studio",
+        width: 1004,
+        height: 650,
+      },
+    ],
+    categories: ["design"],
+    technologies: ["Illustrator", "InDesign", "Brand identity", "Print design"],
+    colSpan: 1,
+    rowSpan: 1,
+    placeholderClass: "from-emerald-400/28 via-violet-400/20 to-fuchsia-400/24",
+  },
+  {
+    id: "p6",
+    title: "Api Jarnoc",
+    summary: "Création de logo, étiquette et cartes de visite pour un projet d'apiculture.",
+    date: "2020-08-01",
+    description:
+      "Création d'une identité visuelle pour Api Jarnoc, projet lié à l'apiculture : conception du logo, d'une étiquette et de cartes de visite. L'objectif était de proposer une identité chaleureuse, lisible et cohérente avec l'univers artisanal du miel.",
+    coverImage: {
+      src: "/projects/prints/api-jarnoc-logo-final.webp",
+      alt: "Logo Api Jarnoc avec illustration d'abeille",
+      width: 940,
+      height: 925,
+    },
+    categories: ["design"],
+    technologies: ["Illustrator", "InDesign", "Brand identity", "Print design"],
+    colSpan: 1,
+    rowSpan: 1,
+    placeholderClass: "from-amber-300/38 via-yellow-500/22 to-emerald-500/18",
+  },
+  {
+    id: "p7",
+    title: "Pas mon genre",
+    summary: "Affiches pour un concours annuel de magazine de graphisme étudiants.",
+    date: "2018-09-10",
+    description:
+      "Participation à un concours annuel de magazine de graphisme pour étudiants autour du thème \"Pas mon genre\". Création de propositions d'affiches pour une exposition fictive au Centre Pompidou de Metz, avec un travail de composition, photomontage, typographie et mise en page.",
+    coverImage: {
+      src: "/projects/prints/pas-mon-genre-poster-1.webp",
+      alt: "Affiche Pas mon genre avec photomontage bleu et typographie blanche",
+      width: 1170,
+      height: 1654,
+    },
+    galleryImages: [
+      {
+        src: "/projects/prints/pas-mon-genre-poster-2.webp",
+        alt: "Affiche Pas mon genre rose avec personnages vintage",
+        width: 1170,
+        height: 1654,
+      },
+    ],
+    categories: ["design"],
+    technologies: ["Photoshop", "InDesign", "Poster design", "Print design"],
+    colSpan: 1,
+    rowSpan: 1,
+    placeholderClass: "from-sky-400/30 via-fuchsia-500/28 to-rose-500/24",
+  },
+  {
+    id: "p8",
+    title: "L'art des choix",
+    summary: "Recherche de logotype pour un restaurant.",
+    date: "2018-01-01",
+    description:
+      "Création de pistes de logotype pour un restaurant, avec plusieurs axes graphiques autour du nom L'art des choix. Le projet explore des compositions typographiques, des déclinaisons horizontales et des propositions plus illustrées pour installer une identité élégante et lisible.",
+    coverImage: {
+      src: "/projects/prints/art-des-choix-logo-1.webp",
+      alt: "Recherches de logotype L'art des choix avec illustrations culinaires",
+      width: 569,
+      height: 607,
+    },
+    galleryImages: [
+      {
+        src: "/projects/prints/art-des-choix-logo-2.webp",
+        alt: "Recherches typographiques minimalistes pour L'art des choix",
+        width: 517,
+        height: 513,
+      },
+      {
+        src: "/projects/prints/art-des-choix-logo-3.webp",
+        alt: "Variantes circulaires du logotype L'art des choix",
+        width: 1119,
+        height: 655,
+      },
+    ],
+    categories: ["design"],
+    technologies: ["Illustrator", "Logo design", "Brand identity"],
+    colSpan: 1,
+    rowSpan: 1,
+    placeholderClass: "from-zinc-300/28 via-stone-500/18 to-emerald-400/14",
   },
 ];
